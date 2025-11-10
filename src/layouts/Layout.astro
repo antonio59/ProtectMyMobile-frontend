@@ -1,0 +1,47 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "ProtectMyMobile helps UK residents secure their mobile phones, provides step-by-step guidance if your phone is stolen, and offers comprehensive mobile security resources." } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content="mobile theft UK, phone security, UK mobile providers, prevent phone theft, report stolen phone, secure banking apps, mobile security guide" />
+    <meta name="author" content="ProtectMyMobile" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://protectmymobile.xyz/" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="https://protectmymobile.xyz/social-share.png" />
+    <meta property="og:site_name" content="ProtectMyMobile" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://protectmymobile.xyz/" />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content="https://protectmymobile.xyz/social-share.png" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://protectmymobile.xyz/" />
+    
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

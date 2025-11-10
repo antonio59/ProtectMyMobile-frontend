@@ -1,0 +1,172 @@
+---
+import { Heart, Shield, Smartphone, ChevronRight, Mail } from "lucide-react";
+---
+
+<footer class="bg-gradient-to-b from-neutral-800 to-neutral-900 text-white pt-12 pb-6">
+  <div class="container mx-auto px-4">
+    <!-- Top section with logo and description -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-10">
+      <div class="flex items-center mb-6 md:mb-0">
+        <svg class="h-12 w-12 mr-3" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="45" fill="#2563eb" opacity="0.2"/>
+          <path d="M50 15 L30 30 L30 60 C30 70 40 80 50 85 C60 80 70 70 70 60 L70 30 Z" fill="#2563eb"/>
+          <path d="M45 50 L42 53 L48 59 L58 45" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div>
+          <h2 class="text-2xl font-bold text-white">ProtectMyMobile</h2>
+          <p class="text-neutral-400 text-sm">Protecting UK mobile users since 2025</p>
+        </div>
+      </div>
+      <div class="flex items-center">
+        <a 
+          href="https://ko-fi.com/Z8Z21E3RHF"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center px-4 py-2 bg-[#FF5E5B] text-white rounded-md font-medium hover:bg-[#FF3D39] transition-colors shadow-sm"
+        >
+          <span class="mr-2">☕</span> Support Us
+        </a>
+      </div>
+    </div>
+
+    <!-- Main footer content grid -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 py-8 border-t border-b border-neutral-700">
+      <div>
+        <h4 class="font-bold text-base md:text-lg mb-3 flex items-center">
+          <Shield className="mr-2 h-4 w-4 md:h-5 md:w-5 text-primary" />
+          Protection
+        </h4>
+        <ul class="space-y-2 md:space-y-3">
+          <li>
+            <a href="/prevention" class="text-neutral-300 hover:text-white transition-colors duration-200 flex items-center text-sm md:text-base">
+              <ChevronRight className="h-3 w-3 md:h-4 md:w-4 mr-1 text-primary" />
+              Prevention Guide
+            </a>
+          </li>
+          <li>
+            <a href="/emergency" class="text-neutral-300 hover:text-white transition-colors duration-200 flex items-center text-sm md:text-base">
+              <ChevronRight className="h-3 w-3 md:h-4 md:w-4 mr-1 text-primary" />
+              Emergency Actions
+            </a>
+          </li>
+          <li>
+            <a href="/security-checkup" class="text-neutral-300 hover:text-white transition-colors duration-200 flex items-center text-sm md:text-base">
+              <ChevronRight className="h-3 w-3 md:h-4 md:w-4 mr-1 text-primary" />
+              Security Checkup
+            </a>
+          </li>
+          <li>
+            <a href="/statistics" class="text-neutral-300 hover:text-white transition-colors duration-200 flex items-center text-sm md:text-base">
+              <ChevronRight className="h-3 w-3 md:h-4 md:w-4 mr-1 text-primary" />
+              Statistics
+            </a>
+          </li>
+        </ul>
+      </div>
+      
+      <div>
+        <h4 class="font-bold text-base md:text-lg mb-3 flex items-center">
+          <Smartphone className="mr-2 h-4 w-4 md:h-5 md:w-5 text-primary" />
+          Directories
+        </h4>
+        <ul class="space-y-2 md:space-y-3">
+          <li>
+            <a href="/banks" class="text-neutral-300 hover:text-white transition-colors duration-200 flex items-center text-sm md:text-base">
+              <ChevronRight className="h-3 w-3 md:h-4 md:w-4 mr-1 text-primary" />
+              Bank Directory
+            </a>
+          </li>
+          <li>
+            <a href="/mobile-providers" class="text-neutral-300 hover:text-white transition-colors duration-200 flex items-center text-sm md:text-base">
+              <ChevronRight className="h-3 w-3 md:h-4 md:w-4 mr-1 text-primary" />
+              Mobile Providers
+            </a>
+          </li>
+          <li>
+            <a href="/community-experiences" class="text-neutral-300 hover:text-white transition-colors duration-200 flex items-center text-sm md:text-base">
+              <ChevronRight className="h-3 w-3 md:h-4 md:w-4 mr-1 text-primary" />
+              Community Experiences
+            </a>
+          </li>
+          <li>
+            <a href="/report-experience" class="text-neutral-300 hover:text-white transition-colors duration-200 flex items-center text-sm md:text-base">
+              <ChevronRight className="h-3 w-3 md:h-4 md:w-4 mr-1 text-primary" />
+              Report Your Experience
+            </a>
+          </li>
+        </ul>
+      </div>
+      
+      <div>
+        <h4 class="font-bold text-base md:text-lg mb-3 flex items-center">
+          <Heart className="mr-2 h-4 w-4 md:h-5 md:w-5 text-primary" />
+          Resources
+        </h4>
+        <ul class="space-y-2 md:space-y-3">
+          <li>
+            <a href="/resources/data-recovery" class="text-neutral-300 hover:text-white transition-colors duration-200 flex items-center text-sm md:text-base">
+              <ChevronRight className="h-3 w-3 md:h-4 md:w-4 mr-1 text-primary" />
+              Data Recovery
+            </a>
+          </li>
+          <li>
+            <a href="/resources/insurance-claims" class="text-neutral-300 hover:text-white transition-colors duration-200 flex items-center text-sm md:text-base">
+              <ChevronRight className="h-3 w-3 md:h-4 md:w-4 mr-1 text-primary" />
+              Insurance Claims
+            </a>
+          </li>
+          <li>
+            <a href="/resources/device-replacement" class="text-neutral-300 hover:text-white transition-colors duration-200 flex items-center text-sm md:text-base">
+              <ChevronRight className="h-3 w-3 md:h-4 md:w-4 mr-1 text-primary" />
+              Device Replacement
+            </a>
+          </li>
+          <li>
+            <a href="/resources/family-safety" class="text-neutral-300 hover:text-white transition-colors duration-200 flex items-center text-sm md:text-base">
+              <ChevronRight className="h-3 w-3 md:h-4 md:w-4 mr-1 text-primary" />
+              Family Safety
+            </a>
+          </li>
+        </ul>
+      </div>
+      
+      <div>
+        <h4 class="font-bold text-base md:text-lg mb-3 flex items-center">
+          <Mail className="mr-2 h-4 w-4 md:h-5 md:w-5 text-primary" />
+          Contact
+        </h4>
+        <ul class="space-y-2 md:space-y-3">
+          <li>
+            <a href="/about-us" class="text-neutral-300 hover:text-white transition-colors duration-200 flex items-center text-sm md:text-base">
+              <ChevronRight className="h-3 w-3 md:h-4 md:w-4 mr-1 text-primary" />
+              About Us
+            </a>
+          </li>
+          <li>
+            <a href="/contact-us" class="text-neutral-300 hover:text-white transition-colors duration-200 flex items-center text-sm md:text-base">
+              <ChevronRight className="h-3 w-3 md:h-4 md:w-4 mr-1 text-primary" />
+              Contact Us
+            </a>
+          </li>
+          <li>
+            <a href="/privacy-policy" class="text-neutral-300 hover:text-white transition-colors duration-200 flex items-center text-sm md:text-base">
+              <ChevronRight className="h-3 w-3 md:h-4 md:w-4 mr-1 text-primary" />
+              Privacy Policy
+            </a>
+          </li>
+          <li>
+            <a href="/terms-of-service" class="text-neutral-300 hover:text-white transition-colors duration-200 flex items-center text-sm md:text-base">
+              <ChevronRight className="h-3 w-3 md:h-4 md:w-4 mr-1 text-primary" />
+              Terms of Service
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Bottom section with copyright -->
+    <div class="mt-8 text-center text-neutral-400 text-sm">
+      <p>&copy; {new Date().getFullYear()} ProtectMyMobile. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
