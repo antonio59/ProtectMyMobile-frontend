@@ -1,0 +1,147 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { banks } from '@/data/banks';
+import { Building2, Search, Phone, Globe, AlertCircle } from 'lucide-react';
+
+// Sort banks alphabetically
+const sortedBanks = [...banks].sort((a, b) => a.name.localeCompare(b.name));
+---
+
+<Layout 
+  title="UK Bank Directory - Emergency Contact Information | ProtectMyMobile"
+  description="Complete directory of UK banks with emergency contact information and step-by-step procedures for securing your accounts if your mobile phone is stolen."
+>
+  <Header />
+  
+  <main class="bg-[#f3f2f1]">
+    <div class="container mx-auto px-4 py-6">
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-4 flex items-center">
+          <Building2 class="h-7 w-7 mr-2 text-primary" />
+          UK Bank Directory
+        </h2>
+        <p class="text-neutral-700 mb-6">
+          Contact information and procedures for UK banks in case your phone is stolen.
+        </p>
+        
+        <!-- Search Box -->
+        <div class="mb-6">
+          <div class="relative">
+            <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 h-5 w-5" />
+            <input
+              id="bank-search"
+              type="text"
+              class="w-full pl-10 pr-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="Search for your bank..."
+            />
+          </div>
+        </div>
+        
+        <!-- Banks List -->
+        <div class="space-y-4" id="bank-list">
+          {sortedBanks.map(bank => (
+            <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              <div class="flex items-start">
+                <!-- Bank Initial Circle -->
+                <div 
+                  class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl mr-4 flex-shrink-0"
+                  style={`background-color: ${bank.colour || bank.color || '#1d4ed8'}`}
+                >
+                  {bank.initial}
+                </div>
+                
+                <div class="flex-1">
+                  <div class="flex items-start justify-between mb-3">
+                    <h3 class="text-xl font-semibold">{bank.name}</h3>
+                    <a 
+                      href={bank.website} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      class="text-sm text-primary hover:underline flex items-center"
+                    >
+                      <Globe class="h-4 w-4 mr-1" />
+                      Website
+                    </a>
+                  </div>
+                  
+                  <!-- Emergency Contacts -->
+                  <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+                    <h4 class="font-semibold text-red-900 mb-2 flex items-center">
+                      <Phone class="h-4 w-4 mr-1" />
+                      Emergency Contacts
+                    </h4>
+                    <div class="space-y-1 text-sm">
+                      <p><strong>UK:</strong> <a href={`tel:${bank.emergencyContact.uk}`} class="text-red-700 hover:underline">{bank.emergencyContact.uk}</a></p>
+                      {bank.emergencyContact.abroad && (
+                        <p><strong>From Abroad:</strong> <a href={`tel:${bank.emergencyContact.abroad}`} class="text-red-700 hover:underline">{bank.emergencyContact.abroad}</a></p>
+                      )}
+                      <p class="text-neutral-600 italic">{bank.emergencyContact.available}</p>
+                    </div>
+                  </div>
+                  
+                  <!-- Steps to Take -->
+                  <div class="mb-3">
+                    <h4 class="font-semibold mb-2">Steps to Take:</h4>
+                    <ol class="list-decimal pl-5 text-neutral-700 space-y-1 text-sm">
+                      {bank.steps.map(step => (
+                        <li>{step}</li>
+                      ))}
+                    </ol>
+                  </div>
+                  
+                  <!-- Additional Info -->
+                  {bank.additionalInfo && (
+                    <div class="p-3 bg-blue-50 border border-blue-200 rounded-md text-sm">
+                      <p class="text-blue-900"><strong>Note:</strong> {bank.additionalInfo}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        <!-- Important Notes -->
+        <div class="mt-8 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <h3 class="font-semibold mb-3 flex items-center text-yellow-900">
+            <AlertCircle class="h-5 w-5 mr-2" />
+            Important Notes:
+          </h3>
+          <ul class="list-disc pl-5 space-y-2 text-neutral-700">
+            <li>Always have your account details ready when calling your bank</li>
+            <li>Report any suspicious transactions immediately</li>
+            <li>Ask for a reference number for your call/report</li>
+            <li>Follow up with written confirmation if required</li>
+            <li>The sooner you contact your bank, the better protected you'll be</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <Footer />
+  
+  <script>
+    // Simple search functionality
+    const searchInput = document.getElementById('bank-search') as HTMLInputElement;
+    const bankList = document.getElementById('bank-list');
+    
+    if (searchInput && bankList) {
+      searchInput.addEventListener('input', (e) => {
+        const query = (e.target as HTMLInputElement).value.toLowerCase();
+        const bankCards = bankList.children;
+        
+        Array.from(bankCards).forEach((card) => {
+          const bankName = card.textContent?.toLowerCase() || '';
+          if (bankName.includes(query)) {
+            (card as HTMLElement).style.display = '';
+          } else {
+            (card as HTMLElement).style.display = 'none';
+          }
+        });
+      });
+    }
+  </script>
+</Layout>

@@ -1,0 +1,192 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getNewsPostBySlug } from '@/lib/supabase';
+import { Calendar, ExternalLink, ArrowLeft } from 'lucide-react';
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  return Astro.redirect('/news');
+}
+
+let post;
+let error = null;
+
+try {
+  post = await getNewsPostBySlug(slug);
+} catch (e) {
+  error = e;
+  console.error('Error fetching news post:', e);
+}
+
+if (!post) {
+  return Astro.redirect('/news');
+}
+
+const categoryColors: Record<string, string> = {
+  arrest: 'bg-red-100 text-red-800',
+  seizure: 'bg-blue-100 text-blue-800',
+  law_change: 'bg-purple-100 text-purple-800',
+  statistics: 'bg-green-100 text-green-800',
+  prevention_tip: 'bg-yellow-100 text-yellow-800',
+  other: 'bg-gray-100 text-gray-800',
+};
+
+function formatDate(dateString: string) {
+  return new Date(dateString).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+}
+---
+
+<Layout 
+  title={`${post.title} | ProtectMyMobile`}
+  description={post.excerpt}
+>
+  <Header />
+  
+  <main class="bg-[#f3f2f1]">
+    <div class="container mx-auto px-4 py-8">
+      <div class="max-w-4xl mx-auto">
+        <!-- Back Link -->
+        <a href="/news" class="inline-flex items-center text-primary hover:underline mb-6">
+          <ArrowLeft class="h-4 w-4 mr-2" />
+          Back to News
+        </a>
+        
+        <!-- Article -->
+        <article class="bg-white rounded-lg shadow-md overflow-hidden">
+          {post.featured_image_url && (
+            <img 
+              src={post.featured_image_url} 
+              alt={post.title}
+              class="w-full h-64 md:h-96 object-cover"
+            />
+          )}
+          
+          <div class="p-8">
+            <!-- Meta -->
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+              <span class={`text-xs px-3 py-1 rounded-full font-medium ${categoryColors[post.category] || categoryColors.other}`}>
+                {post.category.replace('_', ' ')}
+              </span>
+              <span class="text-sm text-neutral-500 flex items-center">
+                <Calendar class="h-4 w-4 mr-1" />
+                {formatDate(post.published_at || post.created_at)}
+              </span>
+              {post.author_name && (
+                <span class="text-sm text-neutral-500">
+                  By {post.author_name}
+                </span>
+              )}
+            </div>
+            
+            <!-- Title -->
+            <h1 class="text-3xl md:text-4xl font-bold mb-4">{post.title}</h1>
+            
+            <!-- Excerpt -->
+            <p class="text-xl text-neutral-600 mb-6">
+              {post.excerpt}
+            </p>
+            
+            <!-- Source -->
+            {post.source_url && (
+              <div class="mb-6 p-4 bg-neutral-50 border border-neutral-200 rounded-md">
+                <p class="text-sm text-neutral-600">
+                  <strong>Source:</strong> 
+                  <a href={post.source_url} target="_blank" rel="noopener noreferrer" class="text-primary hover:underline inline-flex items-center ml-1">
+                    {post.source_name || 'External Link'}
+                    <ExternalLink class="h-3 w-3 ml-1" />
+                  </a>
+                </p>
+              </div>
+            )}
+            
+            <!-- Content -->
+            <div class="prose prose-lg max-w-none">
+              <div set:html={post.content} />
+            </div>
+          </div>
+        </article>
+        
+        <!-- Related/Back CTA -->
+        <div class="mt-8 bg-white rounded-lg shadow-md p-6 text-center">
+          <p class="text-neutral-700 mb-4">
+            Stay informed about the latest mobile theft news and updates.
+          </p>
+          <a href="/news" class="inline-flex items-center justify-center rounded-md text-sm font-medium bg-primary text-white hover:bg-primary/90 h-10 px-6 py-2">
+            View All News
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <Footer />
+</Layout>
+
+<style>
+  /* Style the markdown content */
+  .prose {
+    color: #374151;
+  }
+  
+  .prose h1, .prose h2, .prose h3, .prose h4 {
+    color: #111827;
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .prose h2 {
+    font-size: 1.875rem;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 0.5rem;
+  }
+  
+  .prose h3 {
+    font-size: 1.5rem;
+  }
+  
+  .prose p {
+    margin-bottom: 1rem;
+    line-height: 1.75;
+  }
+  
+  .prose ul, .prose ol {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+  }
+  
+  .prose li {
+    margin-bottom: 0.5rem;
+  }
+  
+  .prose a {
+    color: #1d4ed8;
+    text-decoration: underline;
+  }
+  
+  .prose blockquote {
+    border-left: 4px solid #1d4ed8;
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: #4b5563;
+  }
+  
+  .prose strong {
+    font-weight: 600;
+    color: #111827;
+  }
+  
+  .prose hr {
+    margin: 2rem 0;
+    border: none;
+    border-top: 1px solid #e5e7eb;
+  }
+</style>

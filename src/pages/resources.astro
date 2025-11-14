@@ -1,0 +1,92 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { Book, FileText, HelpCircle, Shield } from 'lucide-react';
+---
+
+<Layout 
+  title="Resources - Mobile Security Guides | ProtectMyMobile"
+  description="Access comprehensive resources, guides, and information about mobile security, theft prevention, and recovery."
+>
+  <Header />
+  
+  <main class="bg-[#f3f2f1]">
+    <div class="container mx-auto px-4 py-8">
+      <h1 class="text-3xl font-bold mb-8 flex items-center">
+        <Book class="h-8 w-8 mr-3 text-primary" />
+        Resources
+      </h1>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Prevention -->
+        <a href="/prevention" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+          <div class="text-primary mb-3">
+            <Shield class="h-8 w-8" />
+          </div>
+          <h2 class="text-xl font-semibold mb-2">Prevention Guides</h2>
+          <p class="text-neutral-700 text-sm">
+            Learn how to secure your device with PIN locks, biometrics, and app-specific security measures.
+          </p>
+        </a>
+        
+        <!-- Emergency -->
+        <a href="/emergency" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+          <div class="text-red-600 mb-3">
+            <FileText class="h-8 w-8" />
+          </div>
+          <h2 class="text-xl font-semibold mb-2">Emergency Response</h2>
+          <p class="text-neutral-700 text-sm">
+            Step-by-step instructions for immediate action if your mobile has been stolen.
+          </p>
+        </a>
+        
+        <!-- Banks -->
+        <a href="/banks" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+          <div class="text-blue-600 mb-3">
+            <FileText class="h-8 w-8" />
+          </div>
+          <h2 class="text-xl font-semibold mb-2">UK Bank Directory</h2>
+          <p class="text-neutral-700 text-sm">
+            Emergency contact information for all major UK banks to secure your accounts.
+          </p>
+        </a>
+        
+        <!-- Mobile Providers -->
+        <a href="/mobile-providers" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+          <div class="text-green-600 mb-3">
+            <FileText class="h-8 w-8" />
+          </div>
+          <h2 class="text-xl font-semibold mb-2">Mobile Provider Directory</h2>
+          <p class="text-neutral-700 text-sm">
+            Contact details for UK mobile networks to report theft and block your SIM.
+          </p>
+        </a>
+        
+        <!-- Statistics -->
+        <a href="/statistics" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+          <div class="text-purple-600 mb-3">
+            <FileText class="h-8 w-8" />
+          </div>
+          <h2 class="text-xl font-semibold mb-2">Theft Statistics</h2>
+          <p class="text-neutral-700 text-sm">
+            View data and insights on mobile theft trends across the UK.
+          </p>
+        </a>
+        
+        <!-- News -->
+        <a href="/news" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+          <div class="text-orange-600 mb-3">
+            <FileText class="h-8 w-8" />
+          </div>
+          <h2 class="text-xl font-semibold mb-2">Latest News</h2>
+          <p class="text-neutral-700 text-sm">
+            Stay informed about arrests, law changes, and theft trends.
+          </p>
+        </a>
+      </div>
+    </div>
+  </main>
+  
+  <Footer />
+</Layout>

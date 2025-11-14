@@ -1,0 +1,193 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { mobileProviders } from '@/data/mobileProviders';
+import { Phone, Search, Globe, AlertCircle } from 'lucide-react';
+
+// Sort providers alphabetically
+const sortedProviders = [...mobileProviders].sort((a, b) => a.name.localeCompare(b.name));
+
+// Group by network for filter tabs
+const networks = ['All', 'EE', 'O2', 'Three', 'Vodafone'];
+---
+
+<Layout 
+  title="UK Mobile Provider Directory - Emergency Contacts | ProtectMyMobile"
+  description="Complete directory of UK mobile network providers with emergency contact numbers to report stolen phones and block SIM cards."
+>
+  <Header />
+  
+  <main class="bg-[#f3f2f1]">
+    <div class="container mx-auto px-4 py-6">
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-4 flex items-center">
+          <Phone class="h-7 w-7 mr-2 text-primary" />
+          Mobile Provider Directory
+        </h2>
+        <p class="text-neutral-700 mb-6">
+          Find your mobile provider to report your stolen SIM and request a block on your number.
+        </p>
+        
+        <!-- Search Box -->
+        <div class="mb-6">
+          <div class="relative">
+            <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 h-5 w-5" />
+            <input
+              id="provider-search"
+              type="text"
+              class="w-full pl-10 pr-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="Search for your mobile provider..."
+            />
+          </div>
+        </div>
+        
+        <!-- Network Filter Tabs -->
+        <div class="mb-6 flex flex-wrap gap-2">
+          {networks.map(network => (
+            <button
+              class="network-filter px-4 py-2 rounded-full text-sm font-medium transition-colors"
+              data-network={network}
+              class:list={[
+                network === 'All' ? 'bg-primary text-white' : 'bg-neutral-200 text-neutral-700 hover:bg-neutral-300'
+              ]}
+            >
+              {network}
+            </button>
+          ))}
+        </div>
+        
+        <!-- Providers List -->
+        <div class="space-y-4" id="provider-list">
+          {sortedProviders.map(provider => (
+            <div class="provider-card bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow" data-network={provider.network}>
+              <div class="flex items-start">
+                <!-- Provider Initial Circle -->
+                <div 
+                  class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl mr-4 flex-shrink-0"
+                  style={`background-color: ${provider.colour}`}
+                >
+                  {provider.initial}
+                </div>
+                
+                <div class="flex-1">
+                  <div class="flex items-start justify-between mb-3">
+                    <div>
+                      <h3 class="text-xl font-semibold">{provider.name}</h3>
+                      <p class="text-sm text-neutral-600">Network: {provider.network}</p>
+                    </div>
+                    <a 
+                      href={provider.website} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      class="text-sm text-primary hover:underline flex items-center"
+                    >
+                      <Globe class="h-4 w-4 mr-1" />
+                      Website
+                    </a>
+                  </div>
+                  
+                  <!-- Emergency Contacts -->
+                  <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+                    <h4 class="font-semibold text-red-900 mb-2 flex items-center">
+                      <Phone class="h-4 w-4 mr-1" />
+                      Emergency Contacts
+                    </h4>
+                    <div class="space-y-1 text-sm">
+                      <p><strong>UK:</strong> <a href={`tel:${provider.emergencyContact.uk}`} class="text-red-700 hover:underline">{provider.emergencyContact.uk}</a></p>
+                      {provider.emergencyContact.abroad && (
+                        <p><strong>From Abroad:</strong> <a href={`tel:${provider.emergencyContact.abroad}`} class="text-red-700 hover:underline">{provider.emergencyContact.abroad}</a></p>
+                      )}
+                      <p class="text-neutral-600 italic">{provider.emergencyContact.available}</p>
+                    </div>
+                  </div>
+                  
+                  <!-- Steps to Take -->
+                  <div class="mb-3">
+                    <h4 class="font-semibold mb-2">Steps to Take:</h4>
+                    <ol class="list-decimal pl-5 text-neutral-700 space-y-1 text-sm">
+                      {provider.steps.map((step: string) => (
+                        <li>{step}</li>
+                      ))}
+                    </ol>
+                  </div>
+                  
+                  <!-- Additional Info -->
+                  {provider.additionalInfo && (
+                    <div class="p-3 bg-blue-50 border border-blue-200 rounded-md text-sm">
+                      <p class="text-blue-900"><strong>Note:</strong> {provider.additionalInfo}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        <!-- Important Notes -->
+        <div class="mt-8 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <h3 class="font-semibold mb-3 flex items-center text-yellow-900">
+            <AlertCircle class="h-5 w-5 mr-2" />
+            Important Notes:
+          </h3>
+          <ul class="list-disc pl-5 space-y-2 text-neutral-700">
+            <li>Contact your provider as soon as possible to prevent unauthorized usage</li>
+            <li>Request a replacement SIM card (usually available at stores or by post)</li>
+            <li>Ask for the call reference number for your records</li>
+            <li>Check if your provider offers theft insurance or protection</li>
+            <li>Update your contact details if your phone number changes</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <Footer />
+  
+  <script>
+    // Search functionality
+    const searchInput = document.getElementById('provider-search') as HTMLInputElement;
+    const providerList = document.getElementById('provider-list');
+    const filterButtons = document.querySelectorAll('.network-filter');
+    let activeNetwork = 'All';
+    
+    function filterProviders() {
+      const query = searchInput?.value.toLowerCase() || '';
+      const providerCards = document.querySelectorAll('.provider-card');
+      
+      providerCards.forEach((card) => {
+        const cardElement = card as HTMLElement;
+        const providerName = cardElement.textContent?.toLowerCase() || '';
+        const providerNetwork = cardElement.dataset.network || '';
+        
+        const matchesSearch = providerName.includes(query);
+        const matchesNetwork = activeNetwork === 'All' || providerNetwork === activeNetwork;
+        
+        cardElement.style.display = matchesSearch && matchesNetwork ? '' : 'none';
+      });
+    }
+    
+    // Search input
+    if (searchInput) {
+      searchInput.addEventListener('input', filterProviders);
+    }
+    
+    // Network filter buttons
+    filterButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        const clickedButton = e.target as HTMLElement;
+        activeNetwork = clickedButton.dataset.network || 'All';
+        
+        // Update button styles
+        filterButtons.forEach(btn => {
+          btn.classList.remove('bg-primary', 'text-white');
+          btn.classList.add('bg-neutral-200', 'text-neutral-700');
+        });
+        clickedButton.classList.remove('bg-neutral-200', 'text-neutral-700');
+        clickedButton.classList.add('bg-primary', 'text-white');
+        
+        filterProviders();
+      });
+    });
+  </script>
+</Layout>
