@@ -2,8 +2,22 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import { getNewsPostBySlug } from '@/lib/supabase';
+import { getNewsPosts, getNewsPostBySlug } from '@/lib/supabase';
 import { Calendar, ExternalLink, ArrowLeft } from 'lucide-react';
+
+// Required for static builds - generate paths for all published news posts
+export async function getStaticPaths() {
+  try {
+    const posts = await getNewsPosts(true); // Get published posts only
+    return posts.map((post) => ({
+      params: { slug: post.slug },
+    }));
+  } catch (error) {
+    console.error('Error generating static paths for news:', error);
+    // Return empty array if no posts or error - won't generate any pages
+    return [];
+  }
+}
 
 const { slug } = Astro.params;
 
