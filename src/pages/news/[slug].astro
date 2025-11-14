@@ -4,6 +4,13 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { getNewsPosts, getNewsPostBySlug } from '@/lib/supabase';
 import { Calendar, ExternalLink, ArrowLeft } from 'lucide-react';
+import { marked } from 'marked';
+
+// Configure marked for better rendering
+marked.setOptions({
+  breaks: true,
+  gfm: true,
+});
 
 // Required for static builds - generate paths for all published news posts
 export async function getStaticPaths() {
@@ -38,6 +45,9 @@ try {
 if (!post) {
   return Astro.redirect('/news');
 }
+
+// Convert markdown to HTML
+const contentHtml = marked.parse(post.content || '');
 
 const categoryColors: Record<string, string> = {
   arrest: 'bg-red-100 text-red-800',
@@ -122,7 +132,7 @@ function formatDate(dateString: string) {
             
             <!-- Content -->
             <div class="prose prose-lg max-w-none">
-              <div set:html={post.content} />
+              <div set:html={contentHtml} />
             </div>
           </div>
         </article>
