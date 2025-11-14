@@ -18,8 +18,8 @@ export interface ImeiRecord {
 export interface ExperienceReport {
   id: number;
   has_experienced_theft: boolean;
-  when: string;
-  where: string;
+  when: string;  // Note: column name is "when" in quotes in DB
+  where: string;  // Note: column name is "where" in quotes in DB
   what_happened: string;
   doing_differently?: string;
   name: string;
