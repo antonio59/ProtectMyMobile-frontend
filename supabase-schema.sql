@@ -3,30 +3,7 @@
 -- Enable Row Level Security
 ALTER DATABASE postgres SET "app.jwt_secret" TO 'your-jwt-secret';
 
--- IMEI Records Table
-CREATE TABLE IF NOT EXISTS imei_records (
-  id BIGSERIAL PRIMARY KEY,
-  imei_number TEXT NOT NULL,
-  device_name TEXT NOT NULL,
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
-);
-
--- Enable RLS
-ALTER TABLE imei_records ENABLE ROW LEVEL SECURITY;
-
--- Policies for imei_records
-CREATE POLICY "Users can view their own IMEI records"
-  ON imei_records FOR SELECT
-  USING (auth.uid() = user_id OR user_id IS NULL);
-
-CREATE POLICY "Anyone can create IMEI records"
-  ON imei_records FOR INSERT
-  WITH CHECK (true);
-
-CREATE POLICY "Users can delete their own IMEI records"
-  ON imei_records FOR DELETE
-  USING (auth.uid() = user_id);
+-- IMEI Records Table - REMOVED (users should save locally instead)
 
 -- Experience Reports Table
 CREATE TABLE IF NOT EXISTS experience_reports (
@@ -137,9 +114,119 @@ CREATE POLICY "Admins can create action history"
     auth.jwt() ->> 'role' = 'super_admin'
   );
 
+-- News/Blog Posts Table
+CREATE TABLE IF NOT EXISTS news_posts (
+  id BIGSERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  slug TEXT NOT NULL UNIQUE,
+  excerpt TEXT NOT NULL,
+  content TEXT NOT NULL,
+  author_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  author_name TEXT NOT NULL,
+  category TEXT NOT NULL CHECK (category IN ('arrest', 'seizure', 'law_change', 'statistics', 'prevention_tip', 'other')),
+  source_url TEXT,
+  source_name TEXT,
+  featured_image_url TEXT,
+  published BOOLEAN NOT NULL DEFAULT false,
+  published_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+-- Enable RLS
+ALTER TABLE news_posts ENABLE ROW LEVEL SECURITY;
+
+-- Policies for news_posts
+CREATE POLICY "Anyone can view published news posts"
+  ON news_posts FOR SELECT
+  USING (published = true);
+
+CREATE POLICY "Admins can view all news posts"
+  ON news_posts FOR SELECT
+  USING (
+    auth.jwt() ->> 'role' = 'admin' OR 
+    auth.jwt() ->> 'role' = 'super_admin'
+  );
+
+CREATE POLICY "Admins can create news posts"
+  ON news_posts FOR INSERT
+  WITH CHECK (
+    auth.jwt() ->> 'role' = 'admin' OR 
+    auth.jwt() ->> 'role' = 'super_admin'
+  );
+
+CREATE POLICY "Admins can update news posts"
+  ON news_posts FOR UPDATE
+  USING (
+    auth.jwt() ->> 'role' = 'admin' OR 
+    auth.jwt() ->> 'role' = 'super_admin'
+  );
+
+CREATE POLICY "Super admins can delete news posts"
+  ON news_posts FOR DELETE
+  USING (auth.jwt() ->> 'role' = 'super_admin');
+
+-- Theft Data Points Table (for timelapse)
+CREATE TABLE IF NOT EXISTS theft_data_points (
+  id BIGSERIAL PRIMARY KEY,
+  date DATE NOT NULL,
+  location_name TEXT NOT NULL,
+  latitude DECIMAL(10, 8) NOT NULL,
+  longitude DECIMAL(11, 8) NOT NULL,
+  theft_count INTEGER NOT NULL DEFAULT 1,
+  data_source TEXT NOT NULL DEFAULT 'met_police',
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  UNIQUE(date, location_name, data_source)
+);
+
+-- Enable RLS
+ALTER TABLE theft_data_points ENABLE ROW LEVEL SECURITY;
+
+-- Policies for theft_data_points (read-only for public)
+CREATE POLICY "Anyone can view theft data"
+  ON theft_data_points FOR SELECT
+  USING (true);
+
+CREATE POLICY "Admins can insert theft data"
+  ON theft_data_points FOR INSERT
+  WITH CHECK (
+    auth.jwt() ->> 'role' = 'admin' OR 
+    auth.jwt() ->> 'role' = 'super_admin'
+  );
+
+-- Met Police Data Requests Table (admin tool)
+CREATE TABLE IF NOT EXISTS met_police_requests (
+  id BIGSERIAL PRIMARY KEY,
+  request_date TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  request_type TEXT NOT NULL CHECK (request_type IN ('foi_request', 'data_update', 'statistics')),
+  date_range_start DATE NOT NULL,
+  date_range_end DATE NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'submitted', 'received', 'processed')),
+  request_details TEXT,
+  response_received_at TIMESTAMPTZ,
+  response_notes TEXT,
+  created_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+-- Enable RLS
+ALTER TABLE met_police_requests ENABLE ROW LEVEL SECURITY;
+
+-- Policies for met_police_requests
+CREATE POLICY "Admins can manage police requests"
+  ON met_police_requests FOR ALL
+  USING (
+    auth.jwt() ->> 'role' = 'admin' OR 
+    auth.jwt() ->> 'role' = 'super_admin'
+  );
+
 -- Create indexes for better performance
-CREATE INDEX idx_imei_records_user_id ON imei_records(user_id);
-CREATE INDEX idx_imei_records_created_at ON imei_records(created_at DESC);
+CREATE INDEX idx_news_posts_published ON news_posts(published, published_at DESC);
+CREATE INDEX idx_news_posts_slug ON news_posts(slug);
+CREATE INDEX idx_news_posts_category ON news_posts(category);
+CREATE INDEX idx_news_posts_created_at ON news_posts(created_at DESC);
+CREATE INDEX idx_theft_data_date ON theft_data_points(date DESC);
+CREATE INDEX idx_theft_data_location ON theft_data_points(location_name);
 CREATE INDEX idx_experience_reports_approved ON experience_reports(approved);
 CREATE INDEX idx_experience_reports_created_at ON experience_reports(created_at DESC);
 CREATE INDEX idx_contact_submissions_responded ON contact_submissions(responded);
@@ -148,13 +235,16 @@ CREATE INDEX idx_admin_action_history_admin_id ON admin_action_history(admin_id)
 CREATE INDEX idx_admin_action_history_created_at ON admin_action_history(created_at DESC);
 
 -- Grant permissions
-GRANT ALL ON imei_records TO authenticated;
+GRANT ALL ON news_posts TO authenticated;
+GRANT ALL ON theft_data_points TO authenticated;
+GRANT ALL ON met_police_requests TO authenticated;
 GRANT ALL ON experience_reports TO authenticated;
 GRANT ALL ON contact_submissions TO authenticated;
 GRANT ALL ON admin_action_history TO authenticated;
 
 -- Allow anonymous access for public features
+GRANT SELECT ON news_posts TO anon;
+GRANT SELECT ON theft_data_points TO anon;
 GRANT SELECT ON experience_reports TO anon;
 GRANT INSERT ON experience_reports TO anon;
 GRANT INSERT ON contact_submissions TO anon;
-GRANT INSERT ON imei_records TO anon;

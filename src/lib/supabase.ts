@@ -7,11 +7,46 @@ const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJ
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Type definitions
-export interface ImeiRecord {
+export interface NewsPost {
   id: number;
-  imei_number: string;
-  device_name: string;
-  user_id?: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  author_id?: string;
+  author_name: string;
+  category: 'arrest' | 'seizure' | 'law_change' | 'statistics' | 'prevention_tip' | 'other';
+  source_url?: string;
+  source_name?: string;
+  featured_image_url?: string;
+  published: boolean;
+  published_at?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TheftDataPoint {
+  id: number;
+  date: string;
+  location_name: string;
+  latitude: number;
+  longitude: number;
+  theft_count: number;
+  data_source: string;
+  created_at: string;
+}
+
+export interface MetPoliceRequest {
+  id: number;
+  request_date: string;
+  request_type: 'foi_request' | 'data_update' | 'statistics';
+  date_range_start: string;
+  date_range_end: string;
+  status: 'pending' | 'submitted' | 'received' | 'processed';
+  request_details?: string;
+  response_received_at?: string;
+  response_notes?: string;
+  created_by?: string;
   created_at: string;
 }
 
@@ -75,35 +110,139 @@ export function isAuthenticated() {
   return supabase.auth.getSession().then(({ data }) => !!data.session);
 }
 
-// IMEI Records
-export async function getImeiRecords() {
-  const { data, error } = await supabase
-    .from('imei_records')
+// News/Blog Posts
+export async function getNewsPosts(publishedOnly = true) {
+  let query = supabase
+    .from('news_posts')
     .select('*')
+    .order('published_at', { ascending: false, nullsFirst: false })
     .order('created_at', { ascending: false });
   
+  if (publishedOnly) {
+    query = query.eq('published', true);
+  }
+  
+  const { data, error } = await query;
   if (error) throw error;
-  return data as ImeiRecord[];
+  return data as NewsPost[];
 }
 
-export async function createImeiRecord(record: Omit<ImeiRecord, 'id' | 'created_at'>) {
+export async function getNewsPostBySlug(slug: string) {
   const { data, error } = await supabase
-    .from('imei_records')
-    .insert([record])
+    .from('news_posts')
+    .select('*')
+    .eq('slug', slug)
+    .single();
+  
+  if (error) throw error;
+  return data as NewsPost;
+}
+
+export async function createNewsPost(post: Omit<NewsPost, 'id' | 'created_at' | 'updated_at'>) {
+  const { data, error } = await supabase
+    .from('news_posts')
+    .insert([post])
     .select()
     .single();
   
   if (error) throw error;
-  return data as ImeiRecord;
+  return data as NewsPost;
 }
 
-export async function deleteImeiRecord(id: number) {
+export async function updateNewsPost(id: number, updates: Partial<NewsPost>) {
+  const { data, error } = await supabase
+    .from('news_posts')
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+  
+  if (error) throw error;
+  return data as NewsPost;
+}
+
+export async function publishNewsPost(id: number) {
+  return updateNewsPost(id, {
+    published: true,
+    published_at: new Date().toISOString(),
+  });
+}
+
+export async function deleteNewsPost(id: number) {
   const { error } = await supabase
-    .from('imei_records')
+    .from('news_posts')
     .delete()
     .eq('id', id);
   
   if (error) throw error;
+}
+
+// Theft Data Points (for timelapse)
+export async function getTheftDataPoints(startDate?: string, endDate?: string) {
+  let query = supabase
+    .from('theft_data_points')
+    .select('*')
+    .order('date', { ascending: true });
+  
+  if (startDate) {
+    query = query.gte('date', startDate);
+  }
+  if (endDate) {
+    query = query.lte('date', endDate);
+  }
+  
+  const { data, error } = await query;
+  if (error) throw error;
+  return data as TheftDataPoint[];
+}
+
+export async function createTheftDataPoints(dataPoints: Omit<TheftDataPoint, 'id' | 'created_at'>[]) {
+  const { data, error } = await supabase
+    .from('theft_data_points')
+    .insert(dataPoints)
+    .select();
+  
+  if (error) throw error;
+  return data as TheftDataPoint[];
+}
+
+// Met Police Requests
+export async function getMetPoliceRequests() {
+  const { data, error } = await supabase
+    .from('met_police_requests')
+    .select('*')
+    .order('request_date', { ascending: false });
+  
+  if (error) throw error;
+  return data as MetPoliceRequest[];
+}
+
+export async function createMetPoliceRequest(request: Omit<MetPoliceRequest, 'id' | 'request_date' | 'created_at'>) {
+  const user = await getCurrentUser();
+  
+  const { data, error } = await supabase
+    .from('met_police_requests')
+    .insert([{
+      ...request,
+      created_by: user?.id,
+    }])
+    .select()
+    .single();
+  
+  if (error) throw error;
+  return data as MetPoliceRequest;
+}
+
+export async function updateMetPoliceRequest(id: number, updates: Partial<MetPoliceRequest>) {
+  const { data, error } = await supabase
+    .from('met_police_requests')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
+  
+  if (error) throw error;
+  return data as MetPoliceRequest;
 }
 
 // Experience Reports
