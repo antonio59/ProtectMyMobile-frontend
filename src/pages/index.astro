@@ -2,267 +2,274 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { Button } from "@/components/ui/button";
+import { getNewsPosts } from '@/lib/supabase';
 import {
   Shield,
-  Smartphone,
   AlertTriangle,
-  ChevronRight,
-  FileText,
-  Book,
-  Users,
-  FileBarChart,
-  Building2,
-  Phone,
   Newspaper,
   MapPin,
+  TrendingUp,
+  Calendar,
+  ArrowRight,
+  Phone,
+  Building2,
 } from "lucide-react";
+
+// Fetch latest news posts
+let latestNews = [];
+try {
+  const posts = await getNewsPosts(true);
+  latestNews = posts.slice(0, 3); // Get 3 most recent
+} catch (e) {
+  console.error('Error fetching news:', e);
+}
+
+function formatDate(dateString: string) {
+  return new Date(dateString).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  });
+}
 ---
 
 <Layout 
-  title="Mobile Security & Theft Prevention Resource | ProtectMyMobile"
-  description="ProtectMyMobile helps UK residents secure their mobile phones against theft, provides step-by-step emergency guidance, and offers comprehensive mobile security resources."
+  title="Mobile Security & Theft Prevention | ProtectMyMobile"
+  description="Protect your mobile from theft with UK-specific guides, emergency response steps, and real-time theft data. Free resources for all UK residents."
 >
   <Header />
   
   <main class="bg-[#f3f2f1]">
-    <div class="container mx-auto px-4 py-8">
-      <!-- Hero section -->
-      <section class="bg-white rounded-lg shadow-md p-6 mb-8">
-        <div class="flex flex-col md:flex-row items-center">
-          <div class="md:w-2/3 mb-6 md:mb-0 md:pr-8">
-            <h1 class="text-3xl md:text-4xl font-bold mb-4 text-primary">
-              Protect Your Mobile And Your Digital Life
-            </h1>
-            <p class="text-lg text-neutral-700 mb-6">
-              ProtectMyMobile helps UK residents safeguard their mobile devices
-              from theft and provides crucial guidance if your mobile is stolen.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4">
-              <a href="/prevention">
-                <Button
-                  size="lg"
-                  className="bg-primary hover:bg-primary-dark text-white"
-                  client:load
-                >
-                  <Shield className="mr-2 h-5 w-5" />
-                  Protect Your Mobile
-                </Button>
-              </a>
-              <a href="/emergency">
-                <Button
-                  size="lg"
-                  variant="destructive"
-                  client:load
-                >
-                  <AlertTriangle className="mr-2 h-5 w-5" />
-                  Emergency Response
-                </Button>
-              </a>
-            </div>
-          </div>
-          <div class="md:w-1/3 flex justify-center">
-            <Shield className="h-40 w-40 text-primary" />
-          </div>
-        </div>
-      </section>
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
       
-      <!-- Main Navigation Bar -->
-      <section class="bg-white rounded-lg shadow-md p-4 mb-8">
-        <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
-          <a href="/prevention" class="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-            <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center border border-gray-200 mb-2">
-              <Shield className="h-5 w-5 text-primary" />
-            </div>
-            <span class="text-sm text-center">Prevention</span>
-          </a>
-          
-          <a href="/banks" class="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-            <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center border border-gray-200 mb-2">
-              <Building2 className="h-5 w-5 text-primary" />
-            </div>
-            <span class="text-sm text-center">Banks</span>
-          </a>
-          
-          <a href="/resources" class="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-            <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center border border-gray-200 mb-2">
-              <Book className="h-5 w-5 text-primary" />
-            </div>
-            <span class="text-sm text-center">Resources</span>
-          </a>
-          
-          <a href="/mobile-providers" class="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-            <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center border border-gray-200 mb-2">
-              <Phone className="h-5 w-5 text-primary" />
-            </div>
-            <span class="text-sm text-center">Networks</span>
-          </a>
-          
-          <a href="/emergency" class="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-            <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center border border-red-200 mb-2">
-              <AlertTriangle className="h-5 w-5 text-red-500" />
-            </div>
-            <span class="text-sm text-center">Emergency</span>
-          </a>
-          
-          <a href="/statistics" class="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-            <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center border border-gray-200 mb-2">
-              <FileBarChart className="h-5 w-5 text-primary" />
-            </div>
-            <span class="text-sm text-center">Statistics</span>
-          </a>
-          
-          <a href="/community-experiences" class="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-            <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center border border-gray-200 mb-2">
-              <Users className="h-5 w-5 text-primary" />
-            </div>
-            <span class="text-sm text-center">Experiences</span>
-          </a>
-          
-          <a href="/about-us" class="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity">
-            <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center border border-gray-200 mb-2">
-              <FileText className="h-5 w-5 text-primary" />
-            </div>
-            <span class="text-sm text-center">About Us</span>
-          </a>
-        </div>
-      </section>
-
-      <!-- Key sections grid -->
-      <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
-          <div class="text-primary mb-4 text-3xl">
-            <Shield className="h-10 w-10" />
-          </div>
-          <h2 class="text-xl font-semibold mb-2">Prevention Guides</h2>
-          <p class="text-neutral-700 mb-4">
-            Learn how to secure your device with PIN locks, biometric security,
-            and app-specific protection.
+      <!-- Hero Section - Simplified -->
+      <section class="bg-gradient-to-br from-primary to-blue-700 text-white rounded-2xl shadow-xl p-8 md:p-12 mb-12">
+        <div class="max-w-4xl">
+          <h1 class="text-4xl md:text-5xl font-bold mb-4">
+            Protect Your Mobile. Secure Your Digital Life.
+          </h1>
+          <p class="text-xl mb-8 text-blue-50">
+            Over 200,000 phones stolen in the UK every year. Get the tools and guidance you need to stay safe.
           </p>
-          <a href="/prevention" class="text-primary font-medium flex items-center hover:underline">
-            View Prevention Guides <ChevronRight className="ml-2 h-4 w-4" />
-          </a>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
-          <div class="text-[#d4351c] mb-4 text-3xl">
-            <AlertTriangle className="h-10 w-10" />
-          </div>
-          <h2 class="text-xl font-semibold mb-2">Emergency Response</h2>
-          <p class="text-neutral-700 mb-4">
-            Step-by-step instructions to take immediate action if your mobile has
-            been stolen.
-          </p>
-          <a href="/emergency" class="text-[#d4351c] font-medium flex items-center hover:underline">
-            View Emergency Actions <ChevronRight className="ml-2 h-4 w-4" />
-          </a>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
-          <div class="text-blue-600 mb-4 text-3xl">
-            <Newspaper className="h-10 w-10" />
-          </div>
-          <h2 class="text-xl font-semibold mb-2">Latest News & Updates</h2>
-          <p class="text-neutral-700 mb-4">
-            Stay informed about arrests, seizures, law changes, and mobile theft trends across the UK.
-          </p>
-          <a href="/news" class="text-blue-600 font-medium flex items-center hover:underline">
-            Read Latest News <ChevronRight className="ml-2 h-4 w-4" />
-          </a>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
-          <div class="text-purple-600 mb-4 text-3xl">
-            <MapPin className="h-10 w-10" />
-          </div>
-          <h2 class="text-xl font-semibold mb-2">Theft Hotspots Timelapse</h2>
-          <p class="text-neutral-700 mb-4">
-            Interactive map showing mobile theft patterns across UK locations over time.
-          </p>
-          <a href="/timelapse" class="text-purple-600 font-medium flex items-center hover:underline">
-            Explore Timelapse <ChevronRight className="ml-2 h-4 w-4" />
-          </a>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
-          <div class="text-primary mb-4 text-3xl">
-            <Smartphone className="h-10 w-10" />
-          </div>
-          <h2 class="text-xl font-semibold mb-2">Record Your IMEI</h2>
-          <p class="text-neutral-700 mb-4">
-            Download a template to save your device's IMEI number securely on your own device.
-          </p>
-          <a href="/prevention#imei" class="text-primary font-medium flex items-center hover:underline">
-            Get IMEI Template <ChevronRight className="ml-2 h-4 w-4" />
-          </a>
-        </div>
-      </section>
-
-      <!-- Additional resources -->
-      <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <div class="flex items-center mb-4">
-            <FileText className="h-6 w-6 text-primary mr-2" />
-            <h2 class="text-xl font-semibold">UK Bank Directory</h2>
-          </div>
-          <p class="text-neutral-700 mb-4">
-            Access emergency contact details and specific procedures for all
-            major UK banks if your mobile is stolen.
-          </p>
-          <a href="/banks">
-            <Button
-              className="bg-primary hover:bg-primary-dark text-white"
-              client:load
+          
+          <!-- Primary Actions -->
+          <div class="flex flex-col sm:flex-row gap-4">
+            <a 
+              href="/prevention" 
+              class="inline-flex items-center justify-center px-8 py-4 bg-white text-primary rounded-lg font-semibold hover:bg-blue-50 transition-colors shadow-lg"
             >
-              View Bank Directory
-            </Button>
-          </a>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <div class="flex items-center mb-4">
-            <Phone className="h-6 w-6 text-primary mr-2" />
-            <h2 class="text-xl font-semibold">Mobile Network Directory</h2>
-          </div>
-          <p class="text-neutral-700 mb-4">
-            Access emergency contact details and procedures for all major UK mobile 
-            network providers to block your SIM if your phone is stolen.
-          </p>
-          <a href="/mobile-providers">
-            <Button
-              className="bg-primary hover:bg-primary-dark text-white"
-              client:load
+              <Shield class="h-5 w-5 mr-2" />
+              Protect Your Phone
+            </a>
+            <a 
+              href="/emergency" 
+              class="inline-flex items-center justify-center px-8 py-4 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors shadow-lg"
             >
-              View Mobile Networks
-            </Button>
-          </a>
-        </div>
-      </section>
-
-      <!-- CTA Banner -->
-      <section class="border-2 border-primary rounded-lg p-6 mb-8 bg-gradient-to-r from-white to-gray-50">
-        <div class="flex flex-col md:flex-row items-center">
-          <div class="flex-1 mb-4 md:mb-0 md:mr-6">
-            <h3 class="text-xl font-semibold mb-2 text-primary">
-              How secure is your mobile?
-            </h3>
-            <p class="text-neutral-700">
-              Complete our quick assessment to identify security gaps and get
-              personalised recommendations.
-            </p>
-          </div>
-          <div>
-            <a href="/security-checkup">
-              <Button
-                className="bg-primary hover:bg-primary-dark text-white"
-                client:load
-              >
-                Start Security Checkup
-              </Button>
+              <AlertTriangle class="h-5 w-5 mr-2" />
+              Phone Stolen? Act Now
             </a>
           </div>
         </div>
       </section>
+
+      <!-- What's New Section - Featured -->
+      <section class="mb-12">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-3xl font-bold text-neutral-900">What's New</h2>
+          <a href="/news" class="text-primary hover:underline font-medium flex items-center">
+            View All News <ArrowRight class="h-4 w-4 ml-1" />
+          </a>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Latest News Posts -->
+          {latestNews.length > 0 ? (
+            latestNews.map((post: any) => (
+              <a href={`/news/${post.slug}`} class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden group">
+                {post.featured_image_url && (
+                  <img 
+                    src={post.featured_image_url} 
+                    alt={post.title}
+                    class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                )}
+                <div class="p-6">
+                  <div class="flex items-center gap-2 mb-3">
+                    <Newspaper class="h-4 w-4 text-blue-600" />
+                    <span class="text-xs text-neutral-500 uppercase font-medium">{post.category.replace('_', ' ')}</span>
+                    <span class="text-xs text-neutral-400">•</span>
+                    <span class="text-xs text-neutral-500">{formatDate(post.published_at || post.created_at)}</span>
+                  </div>
+                  <h3 class="text-lg font-semibold mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                    {post.title}
+                  </h3>
+                  <p class="text-neutral-600 text-sm line-clamp-3">
+                    {post.excerpt}
+                  </p>
+                </div>
+              </a>
+            ))
+          ) : (
+            <div class="col-span-3 bg-blue-50 border border-blue-200 rounded-lg p-12 text-center">
+              <Newspaper class="h-16 w-16 text-blue-400 mx-auto mb-4" />
+              <h3 class="text-xl font-semibold text-blue-900 mb-2">News Coming Soon</h3>
+              <p class="text-blue-700 mb-4">We're preparing the latest updates on UK mobile theft trends, arrests, and policy changes.</p>
+              <a href="/news" class="text-primary hover:underline font-medium">Check back soon →</a>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <!-- Featured Tool: Timelapse -->
+      <section class="mb-12">
+        <a href="/timelapse" class="block bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-shadow group">
+          <div class="p-8 md:p-12 text-white">
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <div class="inline-flex items-center gap-2 bg-white/20 rounded-full px-4 py-2 mb-4">
+                  <MapPin class="h-5 w-5" />
+                  <span class="font-medium">NEW FEATURE</span>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                  UK Theft Hotspots Timelapse
+                </h2>
+                <p class="text-xl text-purple-100 mb-6 max-w-2xl">
+                  Explore an interactive map showing where and when mobile thefts occur across the UK. 
+                  See patterns emerge over time and identify high-risk areas.
+                </p>
+                <div class="inline-flex items-center gap-2 text-lg font-semibold group-hover:gap-4 transition-all">
+                  Explore the Map <ArrowRight class="h-5 w-5" />
+                </div>
+              </div>
+              <div class="hidden md:block">
+                <MapPin class="h-32 w-32 text-white/30" />
+              </div>
+            </div>
+          </div>
+        </a>
+      </section>
+
+      <!-- Quick Stats -->
+      <section class="mb-12">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <div class="text-3xl font-bold text-red-600 mb-1">200,000+</div>
+            <div class="text-sm text-neutral-600">Phones stolen yearly</div>
+          </div>
+          <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <div class="text-3xl font-bold text-orange-600 mb-1">26%</div>
+            <div class="text-sm text-neutral-600">Increase in 3 years</div>
+          </div>
+          <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <div class="text-3xl font-bold text-blue-600 mb-1">5%</div>
+            <div class="text-sm text-neutral-600">Recovery rate</div>
+          </div>
+          <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <div class="text-3xl font-bold text-purple-600 mb-1">£500M</div>
+            <div class="text-sm text-neutral-600">Annual value lost</div>
+          </div>
+        </div>
+        <div class="text-center mt-4">
+          <a href="/statistics" class="text-primary hover:underline font-medium flex items-center justify-center">
+            <TrendingUp class="h-4 w-4 mr-1" />
+            View Detailed Statistics
+          </a>
+        </div>
+      </section>
+
+      <!-- Core Resources - Clean 2x2 Grid -->
+      <section class="mb-12">
+        <h2 class="text-3xl font-bold text-neutral-900 mb-6">Essential Resources</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Prevention -->
+          <div class="bg-white rounded-xl shadow-md p-8 hover:shadow-xl transition-shadow">
+            <div class="flex items-start">
+              <div class="bg-primary/10 rounded-lg p-3 mr-4">
+                <Shield class="h-8 w-8 text-primary" />
+              </div>
+              <div class="flex-1">
+                <h3 class="text-2xl font-semibold mb-2">Prevention Guides</h3>
+                <p class="text-neutral-600 mb-4">
+                  Secure your device with PIN locks, SIM protection, and app security. Learn how to prevent theft before it happens.
+                </p>
+                <a href="/prevention" class="text-primary font-medium hover:underline flex items-center">
+                  Learn How to Protect Your Phone <ArrowRight class="h-4 w-4 ml-1" />
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Emergency -->
+          <div class="bg-white rounded-xl shadow-md p-8 hover:shadow-xl transition-shadow">
+            <div class="flex items-start">
+              <div class="bg-red-100 rounded-lg p-3 mr-4">
+                <AlertTriangle class="h-8 w-8 text-red-600" />
+              </div>
+              <div class="flex-1">
+                <h3 class="text-2xl font-semibold mb-2">Emergency Response</h3>
+                <p class="text-neutral-600 mb-4">
+                  Phone stolen? Follow our 5-step emergency checklist to lock your device, secure accounts, and report the theft.
+                </p>
+                <a href="/emergency" class="text-red-600 font-medium hover:underline flex items-center">
+                  See Emergency Steps <ArrowRight class="h-4 w-4 ml-1" />
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Banks -->
+          <div class="bg-white rounded-xl shadow-md p-8 hover:shadow-xl transition-shadow">
+            <div class="flex items-start">
+              <div class="bg-blue-100 rounded-lg p-3 mr-4">
+                <Building2 class="h-8 w-8 text-blue-600" />
+              </div>
+              <div class="flex-1">
+                <h3 class="text-2xl font-semibold mb-2">UK Bank Contacts</h3>
+                <p class="text-neutral-600 mb-4">
+                  Emergency contact numbers for 25+ UK banks. Secure your accounts and prevent fraud immediately.
+                </p>
+                <a href="/banks" class="text-blue-600 font-medium hover:underline flex items-center">
+                  Find Your Bank <ArrowRight class="h-4 w-4 ml-1" />
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Networks -->
+          <div class="bg-white rounded-xl shadow-md p-8 hover:shadow-xl transition-shadow">
+            <div class="flex items-start">
+              <div class="bg-green-100 rounded-lg p-3 mr-4">
+                <Phone class="h-8 w-8 text-green-600" />
+              </div>
+              <div class="flex-1">
+                <h3 class="text-2xl font-semibold mb-2">Mobile Networks</h3>
+                <p class="text-neutral-600 mb-4">
+                  Contact details for 50+ UK mobile providers. Block your SIM and prevent unauthorized usage.
+                </p>
+                <a href="/mobile-providers" class="text-green-600 font-medium hover:underline flex items-center">
+                  Find Your Provider <ArrowRight class="h-4 w-4 ml-1" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- More Resources CTA -->
+      <section class="bg-white rounded-xl shadow-md p-8 text-center">
+        <h3 class="text-2xl font-semibold mb-3">Looking for More Resources?</h3>
+        <p class="text-neutral-600 mb-6 max-w-2xl mx-auto">
+          Access our complete library of guides, tools, community stories, and expert advice.
+        </p>
+        <a 
+          href="/resources" 
+          class="inline-flex items-center justify-center px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary/90 transition-colors"
+        >
+          Browse All Resources
+        </a>
+      </section>
+
     </div>
   </main>
   
