@@ -107,42 +107,46 @@ import { IdCard, Fingerprint, Lock, ShieldCheck, AlertCircle } from "lucide-reac
           </div>
         </div>
         
-        <!-- IMEI Download Tool -->
+        <!-- IMEI Information -->
         <div class="bg-white rounded-lg shadow-md p-6 mb-8">
           <h3 class="text-xl font-semibold mb-4 flex items-center">
             <ShieldCheck className="h-6 w-6 text-primary mr-2" />
-            Record Your IMEI Number
+            Know Your IMEI Number
           </h3>
           <p class="text-neutral-700 mb-4">
-            Keep a record of your device's unique IMEI number in a secure location. This helps with reporting and blocking your device if it's stolen.
+            Your IMEI (International Mobile Equipment Identity) is your phone's unique 15-digit identifier. You'll need this to report theft to police and your network provider.
           </p>
           
-          <div class="mb-4 p-4 bg-neutral-100 rounded-md">
-            <h4 class="font-medium mb-2">How to find your IMEI:</h4>
-            <ul class="list-disc pl-5 text-neutral-700 space-y-1">
-              <li>Dial *#06# on your phone's keypad</li>
-              <li>Check in Settings > About Phone</li>
-              <li>Look on the original packaging or receipt</li>
+          <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
+            <h4 class="font-medium mb-3 text-blue-900">How to find your IMEI:</h4>
+            <ul class="list-disc pl-5 text-blue-800 space-y-2">
+              <li><strong>Easiest:</strong> Dial <code class="bg-blue-100 px-2 py-1 rounded">*#06#</code> on your phone's keypad - the number appears instantly</li>
+              <li><strong>In settings:</strong> Go to Settings → About Phone/General → IMEI</li>
+              <li><strong>On packaging:</strong> Check the original box your phone came in</li>
+              <li><strong>On receipt:</strong> Your purchase receipt may have it listed</li>
             </ul>
           </div>
           
-          <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-md mb-4">
+          <div class="p-4 bg-green-50 border border-green-200 rounded-md mb-4">
             <div class="flex items-start">
-              <AlertCircle className="h-5 w-5 text-yellow-600 mr-2 mt-0.5 flex-shrink-0" />
+              <ShieldCheck className="h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
               <div>
-                <p class="font-medium text-yellow-800">We don't store IMEI numbers</p>
-                <p class="text-yellow-700 text-sm">For your privacy and security, save your IMEI locally using the tool below.</p>
+                <p class="font-medium text-green-800 mb-2">We protect your privacy</p>
+                <p class="text-green-700 text-sm mb-2">We <strong>never</strong> ask for or store your IMEI number. Keep it private and secure on your own devices.</p>
               </div>
             </div>
           </div>
-          
-          <p class="text-neutral-700 mb-4">
-            <strong>Save your IMEI securely:</strong> Use the button below to download a text file with your IMEI information. Store it in a secure location (password manager, encrypted notes, or print and keep in a safe place).
-          </p>
-          
-          <a href="#" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2" onclick="alert('IMEI download tool coming soon!')">
-            Download IMEI Record Template
-          </a>
+
+          <div class="p-4 bg-neutral-100 rounded-md">
+            <h4 class="font-medium mb-3">Where to save your IMEI securely:</h4>
+            <ul class="list-disc pl-5 text-neutral-700 space-y-2 text-sm">
+              <li><strong>Password manager</strong> (1Password, Bitwarden, LastPass) - most secure digital option</li>
+              <li><strong>Encrypted notes</strong> on a separate device or computer</li>
+              <li><strong>Email to yourself</strong> with a clear subject like "Phone IMEI - [Phone Model]"</li>
+              <li><strong>Write it down</strong> and keep it in a safe place at home</li>
+              <li><strong>Take a screenshot</strong> of the *#06# screen and store in a secure photo album</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
