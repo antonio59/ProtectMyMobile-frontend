@@ -1,0 +1,90 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { MapPin, Play, Pause, Calendar, TrendingUp } from 'lucide-react';
+---
+
+<Layout 
+  title="Theft Hotspots Timelapse - Interactive Map | ProtectMyMobile"
+  description="Explore an interactive timelapse of mobile phone theft hotspots across the UK. See where and when thefts occur most frequently."
+>
+  <Header />
+  
+  <main class="bg-[#f3f2f1]">
+    <div class="container mx-auto px-4 py-8">
+      <!-- Header -->
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold mb-2 flex items-center">
+          <MapPin class="h-8 w-8 mr-3 text-primary" />
+          Theft Hotspots Timelapse
+        </h1>
+        <p class="text-lg text-neutral-700">
+          Interactive visualization of mobile phone theft patterns across the UK over time.
+        </p>
+      </div>
+
+      <!-- Coming Soon Notice -->
+      <div class="bg-white rounded-lg shadow-md p-12 text-center mb-8">
+        <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mb-6">
+          <MapPin class="h-10 w-10 text-primary" />
+        </div>
+        
+        <h2 class="text-2xl font-bold mb-4">Interactive Timelapse Coming Soon</h2>
+        
+        <p class="text-neutral-700 mb-6 max-w-2xl mx-auto">
+          We're building an interactive map that visualizes mobile theft hotspots over time, 
+          similar to the GovSpendBase phones timelapse. This will help you understand theft patterns 
+          and identify high-risk areas.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mb-8">
+          <div class="p-4 bg-neutral-50 rounded-lg">
+            <Play class="h-6 w-6 text-primary mx-auto mb-2" />
+            <h3 class="font-semibold mb-1">Animated Timeline</h3>
+            <p class="text-sm text-neutral-600">Watch theft patterns evolve over months and years</p>
+          </div>
+          
+          <div class="p-4 bg-neutral-50 rounded-lg">
+            <MapPin class="h-6 w-6 text-primary mx-auto mb-2" />
+            <h3 class="font-semibold mb-1">Location Heatmaps</h3>
+            <p class="text-sm text-neutral-600">See which areas have the highest theft rates</p>
+          </div>
+          
+          <div class="p-4 bg-neutral-50 rounded-lg">
+            <TrendingUp class="h-6 w-6 text-primary mx-auto mb-2" />
+            <h3 class="font-semibold mb-1">Trend Analysis</h3>
+            <p class="text-sm text-neutral-600">Identify patterns and seasonal variations</p>
+          </div>
+        </div>
+
+        <div class="p-6 bg-blue-50 border border-blue-200 rounded-lg max-w-2xl mx-auto">
+          <h3 class="font-semibold mb-2 text-blue-900">Data Source</h3>
+          <p class="text-sm text-blue-800 mb-3">
+            Our timelapse will use official data from the Metropolitan Police and other UK police forces, 
+            obtained through Freedom of Information requests.
+          </p>
+          <p class="text-sm text-blue-700">
+            <strong>Reference:</strong> Inspired by <a href="https://www.govspendbase.uk/phones-timelapse" target="_blank" rel="noopener noreferrer" class="underline hover:text-blue-900">GovSpendBase Phones Timelapse</a>
+          </p>
+        </div>
+      </div>
+
+      <!-- Admin Note -->
+      <div class="bg-primary/5 border border-primary rounded-lg p-6">
+        <h3 class="font-semibold mb-2 flex items-center">
+          <Calendar class="h-5 w-5 mr-2" />
+          For Site Admins
+        </h3>
+        <p class="text-neutral-700 mb-3">
+          Use the admin panel to request updated theft data from the Met Police and upload it to power this timelapse visualization.
+        </p>
+        <a href="/admin/data-requests" class="text-primary hover:underline font-medium">
+          Go to Data Request Tool →
+        </a>
+      </div>
+    </div>
+  </main>
+  
+  <Footer />
+</Layout>
