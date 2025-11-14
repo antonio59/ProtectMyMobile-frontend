@@ -32,8 +32,8 @@ CREATE POLICY "Users can delete their own IMEI records"
 CREATE TABLE IF NOT EXISTS experience_reports (
   id BIGSERIAL PRIMARY KEY,
   has_experienced_theft BOOLEAN NOT NULL DEFAULT true,
-  when TEXT NOT NULL,
-  where TEXT NOT NULL,
+  "when" TEXT NOT NULL,
+  "where" TEXT NOT NULL,
   what_happened TEXT NOT NULL,
   doing_differently TEXT,
   name TEXT NOT NULL,
