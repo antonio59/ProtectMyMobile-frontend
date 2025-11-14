@@ -12,6 +12,7 @@
     "@astrojs/react": "^4.4.2",
     "@radix-ui/react-slot": "^1.2.4",
     "@rollup/rollup-darwin-arm64": "^4.53.2",
+    "@supabase/supabase-js": "^2.81.1",
     "@tanstack/react-query": "^5.90.7",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
