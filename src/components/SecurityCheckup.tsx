@@ -1,0 +1,298 @@
+import { useState } from 'react';
+import { Check, X, Shield, AlertTriangle, CheckCircle2, XCircle } from 'lucide-react';
+
+interface Question {
+  id: string;
+  question: string;
+  category: 'device' | 'sim' | 'apps' | 'backup' | 'awareness';
+  points: number;
+}
+
+const questions: Question[] = [
+  // Device Security
+  { id: 'q1', question: 'Do you have a screen lock enabled (PIN, password, pattern, or biometric)?', category: 'device', points: 15 },
+  { id: 'q2', question: 'Is your screen lock set to auto-lock within 30 seconds of inactivity?', category: 'device', points: 10 },
+  { id: 'q3', question: 'Do you use biometric authentication (fingerprint or face recognition)?', category: 'device', points: 10 },
+  { id: 'q4', question: 'Have you enabled Find My Device/iPhone on your phone?', category: 'device', points: 15 },
+  
+  // SIM & Network
+  { id: 'q5', question: 'Have you set up a SIM PIN lock?', category: 'sim', points: 10 },
+  { id: 'q6', question: 'Do you know your phone\'s IMEI number and have it written down somewhere safe?', category: 'sim', points: 10 },
+  
+  // Apps & Banking
+  { id: 'q7', question: 'Do your banking apps require separate authentication (PIN or biometric)?', category: 'apps', points: 10 },
+  { id: 'q8', question: 'Have you enabled two-factor authentication (2FA) on important accounts?', category: 'apps', points: 10 },
+  { id: 'q9', question: 'Are your app permissions set to only what\'s necessary?', category: 'apps', points: 5 },
+  
+  // Backup & Recovery
+  { id: 'q10', question: 'Do you regularly back up your phone data to cloud or computer?', category: 'backup', points: 5 },
+  { id: 'q11', question: 'Have you saved emergency contact numbers (bank, network provider) elsewhere?', category: 'backup', points: 5 },
+  
+  // Awareness
+  { id: 'q12', question: 'Do you avoid using your phone while walking in busy or high-risk areas?', category: 'awareness', points: 5 },
+];
+
+const categoryNames = {
+  device: 'Device Security',
+  sim: 'SIM & Network',
+  apps: 'Apps & Banking',
+  backup: 'Backup & Recovery',
+  awareness: 'Awareness',
+};
+
+export default function SecurityCheckup() {
+  const [answers, setAnswers] = useState<Record<string, boolean | null>>({});
+  const [showResults, setShowResults] = useState(false);
+
+  const handleAnswer = (questionId: string, answer: boolean) => {
+    setAnswers(prev => ({ ...prev, [questionId]: answer }));
+  };
+
+  const calculateScore = () => {
+    const totalPoints = questions.reduce((sum, q) => sum + q.points, 0);
+    const earnedPoints = questions.reduce((sum, q) => {
+      return sum + (answers[q.id] === true ? q.points : 0);
+    }, 0);
+    const percentage = Math.round((earnedPoints / totalPoints) * 100);
+    return { earnedPoints, totalPoints, percentage };
+  };
+
+  const getScoreLevel = (percentage: number) => {
+    if (percentage >= 90) return { level: 'Excellent', color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200' };
+    if (percentage >= 70) return { level: 'Good', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200' };
+    if (percentage >= 50) return { level: 'Fair', color: 'text-yellow-600', bg: 'bg-yellow-50', border: 'border-yellow-200' };
+    return { level: 'Needs Improvement', color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200' };
+  };
+
+  const getRecommendations = () => {
+    const recs = [];
+    questions.forEach(q => {
+      if (answers[q.id] === false) {
+        switch (q.id) {
+          case 'q1':
+            recs.push({ title: 'Enable Screen Lock', description: 'Set up a PIN, password, or biometric lock immediately. This is your first line of defense.', priority: 'high' });
+            break;
+          case 'q4':
+            recs.push({ title: 'Enable Find My Device', description: 'Turn on Find My iPhone (iOS) or Find My Device (Android) to track and remotely lock your phone.', priority: 'high' });
+            break;
+          case 'q5':
+            recs.push({ title: 'Set SIM PIN', description: 'Prevent thieves from using your SIM in another device by setting a SIM PIN in your phone settings.', priority: 'high' });
+            break;
+          case 'q6':
+            recs.push({ title: 'Record IMEI Number', description: 'Dial *#06# to find your IMEI and save it securely. You\'ll need this to report theft to police.', priority: 'medium' });
+            break;
+          case 'q7':
+            recs.push({ title: 'Secure Banking Apps', description: 'Enable app-specific authentication for banking apps, separate from your device lock.', priority: 'high' });
+            break;
+          case 'q8':
+            recs.push({ title: 'Enable 2FA', description: 'Turn on two-factor authentication for email, social media, and banking accounts.', priority: 'medium' });
+            break;
+        }
+      }
+    });
+    return recs;
+  };
+
+  const allAnswered = questions.every(q => answers[q.id] !== undefined && answers[q.id] !== null);
+
+  const handleSubmit = () => {
+    if (allAnswered) {
+      setShowResults(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleReset = () => {
+    setAnswers({});
+    setShowResults(false);
+  };
+
+  if (showResults) {
+    const score = calculateScore();
+    const scoreLevel = getScoreLevel(score.percentage);
+    const recommendations = getRecommendations();
+
+    return (
+      <div className="space-y-6">
+        {/* Score Card */}
+        <div className={`${scoreLevel.bg} border-2 ${scoreLevel.border} rounded-xl p-8 text-center`}>
+          <div className="mb-4">
+            <Shield className={`h-16 w-16 ${scoreLevel.color} mx-auto mb-2`} />
+          </div>
+          <h2 className="text-3xl font-bold mb-2">Your Security Score</h2>
+          <div className={`text-6xl font-bold ${scoreLevel.color} mb-2`}>
+            {score.percentage}%
+          </div>
+          <div className="text-xl font-semibold mb-1">{scoreLevel.level}</div>
+          <div className="text-neutral-600">
+            {score.earnedPoints} out of {score.totalPoints} points
+          </div>
+        </div>
+
+        {/* Score Breakdown */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="text-xl font-semibold mb-4">Category Breakdown</h3>
+          <div className="space-y-3">
+            {Object.entries(categoryNames).map(([key, name]) => {
+              const categoryQuestions = questions.filter(q => q.category === key);
+              const categoryTotal = categoryQuestions.reduce((sum, q) => sum + q.points, 0);
+              const categoryEarned = categoryQuestions.reduce((sum, q) => sum + (answers[q.id] ? q.points : 0), 0);
+              const categoryPercent = Math.round((categoryEarned / categoryTotal) * 100);
+
+              return (
+                <div key={key}>
+                  <div className="flex justify-between mb-1">
+                    <span className="font-medium">{name}</span>
+                    <span className="text-neutral-600">{categoryPercent}%</span>
+                  </div>
+                  <div className="w-full bg-neutral-200 rounded-full h-2">
+                    <div
+                      className={`h-2 rounded-full ${categoryPercent >= 70 ? 'bg-green-500' : categoryPercent >= 50 ? 'bg-yellow-500' : 'bg-red-500'}`}
+                      style={{ width: `${categoryPercent}%` }}
+                    ></div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Recommendations */}
+        {recommendations.length > 0 && (
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-xl font-semibold mb-4 flex items-center">
+              <AlertTriangle className="h-6 w-6 text-orange-600 mr-2" />
+              Your Action Plan
+            </h3>
+            <p className="text-neutral-600 mb-4">
+              Based on your answers, here are the top security improvements you should make:
+            </p>
+            <div className="space-y-3">
+              {recommendations.map((rec, idx) => (
+                <div
+                  key={idx}
+                  className={`p-4 rounded-lg border-l-4 ${rec.priority === 'high' ? 'border-red-500 bg-red-50' : 'border-yellow-500 bg-yellow-50'}`}
+                >
+                  <div className="flex items-start">
+                    <div className={`rounded-full p-1 mr-3 mt-0.5 ${rec.priority === 'high' ? 'bg-red-200' : 'bg-yellow-200'}`}>
+                      <AlertTriangle className={`h-4 w-4 ${rec.priority === 'high' ? 'text-red-700' : 'text-yellow-700'}`} />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold mb-1">{rec.title}</h4>
+                      <p className="text-sm text-neutral-700">{rec.description}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Perfect Score */}
+        {score.percentage === 100 && (
+          <div className="bg-green-50 border-2 border-green-200 rounded-lg p-6 text-center">
+            <CheckCircle2 className="h-12 w-12 text-green-600 mx-auto mb-3" />
+            <h3 className="text-xl font-bold text-green-900 mb-2">Perfect Security Setup! 🎉</h3>
+            <p className="text-green-800">
+              You've implemented all recommended security measures. Keep maintaining these practices to stay protected.
+            </p>
+          </div>
+        )}
+
+        {/* Next Steps */}
+        <div className="bg-primary/5 border border-primary/20 rounded-lg p-6">
+          <h3 className="text-lg font-semibold mb-3">Next Steps</h3>
+          <div className="space-y-2 text-sm">
+            <p>✅ Review our <a href="/prevention" className="text-primary hover:underline font-medium">prevention guides</a> for detailed setup instructions</p>
+            <p>✅ Save emergency contacts for your <a href="/banks" className="text-primary hover:underline font-medium">bank</a> and <a href="/mobile-providers" className="text-primary hover:underline font-medium">network provider</a></p>
+            <p>✅ Bookmark our <a href="/emergency" className="text-primary hover:underline font-medium">emergency response guide</a> for quick access if theft occurs</p>
+          </div>
+        </div>
+
+        <div className="text-center">
+          <button
+            onClick={handleReset}
+            className="px-6 py-3 bg-neutral-200 text-neutral-800 rounded-lg font-medium hover:bg-neutral-300 transition-colors"
+          >
+            Retake Assessment
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Progress */}
+      <div className="bg-white rounded-lg shadow-md p-4">
+        <div className="flex justify-between mb-2">
+          <span className="text-sm font-medium">Progress</span>
+          <span className="text-sm text-neutral-600">
+            {Object.keys(answers).length} of {questions.length} answered
+          </span>
+        </div>
+        <div className="w-full bg-neutral-200 rounded-full h-2">
+          <div
+            className="bg-primary h-2 rounded-full transition-all duration-300"
+            style={{ width: `${(Object.keys(answers).length / questions.length) * 100}%` }}
+          ></div>
+        </div>
+      </div>
+
+      {/* Questions */}
+      <div className="space-y-4">
+        {questions.map((q, idx) => (
+          <div key={q.id} className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-start">
+              <div className="bg-primary/10 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mr-3 mt-1">
+                <span className="text-primary font-bold text-sm">{idx + 1}</span>
+              </div>
+              <div className="flex-1">
+                <p className="text-lg font-medium mb-3">{q.question}</p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => handleAnswer(q.id, true)}
+                    className={`flex-1 px-4 py-3 rounded-lg border-2 transition-all ${
+                      answers[q.id] === true
+                        ? 'border-green-500 bg-green-50 text-green-700'
+                        : 'border-neutral-300 hover:border-green-300 text-neutral-700'
+                    }`}
+                  >
+                    <Check className="h-5 w-5 inline mr-2" />
+                    Yes
+                  </button>
+                  <button
+                    onClick={() => handleAnswer(q.id, false)}
+                    className={`flex-1 px-4 py-3 rounded-lg border-2 transition-all ${
+                      answers[q.id] === false
+                        ? 'border-red-500 bg-red-50 text-red-700'
+                        : 'border-neutral-300 hover:border-red-300 text-neutral-700'
+                    }`}
+                  >
+                    <X className="h-5 w-5 inline mr-2" />
+                    No
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Submit Button */}
+      <div className="sticky bottom-4 bg-white rounded-lg shadow-xl p-4 border-2 border-primary/20">
+        <button
+          onClick={handleSubmit}
+          disabled={!allAnswered}
+          className={`w-full px-6 py-4 rounded-lg font-bold text-lg transition-all ${
+            allAnswered
+              ? 'bg-primary text-white hover:bg-primary/90 cursor-pointer'
+              : 'bg-neutral-300 text-neutral-500 cursor-not-allowed'
+          }`}
+        >
+          {allAnswered ? 'Get My Security Score' : `Answer All Questions (${Object.keys(answers).length}/${questions.length})`}
+        </button>
+      </div>
+    </div>
+  );
+}

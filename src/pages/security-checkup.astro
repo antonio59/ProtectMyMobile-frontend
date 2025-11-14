@@ -2,110 +2,30 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { ShieldCheck, AlertCircle } from 'lucide-react';
+import SecurityCheckup from '../components/SecurityCheckup';
+import { ShieldCheck } from 'lucide-react';
 ---
 
 <Layout 
   title="Security Checkup - Assess Your Mobile Security | ProtectMyMobile"
-  description="Take our quick security assessment to identify vulnerabilities and get personalized recommendations for protecting your mobile device."
+  description="Take our interactive security assessment to identify vulnerabilities and get personalized recommendations for protecting your mobile device."
 >
   <Header />
   
   <main class="bg-[#f3f2f1]">
     <div class="container mx-auto px-4 py-8">
-      <div class="max-w-3xl mx-auto">
-        <h1 class="text-3xl font-bold mb-6 flex items-center">
-          <ShieldCheck class="h-8 w-8 mr-3 text-primary" />
-          Mobile Security Checkup
-        </h1>
-        
-        <div class="bg-white rounded-lg shadow-md p-8">
-          <p class="text-lg text-neutral-700 mb-6">
-            Answer these questions to assess your current mobile security and get personalized recommendations.
+      <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-8">
+          <h1 class="text-4xl font-bold mb-4 flex items-center justify-center">
+            <ShieldCheck class="h-10 w-10 mr-3 text-primary" />
+            Mobile Security Checkup
+          </h1>
+          <p class="text-xl text-neutral-600 max-w-2xl mx-auto">
+            Answer 12 quick questions to discover how secure your phone really is and get personalized recommendations.
           </p>
-          
-          <!-- Coming Soon Notice -->
-          <div class="bg-blue-50 border border-blue-200 rounded-lg p-8 text-center">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 mb-4">
-              <ShieldCheck class="h-8 w-8 text-blue-600" />
-            </div>
-            
-            <h2 class="text-2xl font-bold mb-3">Interactive Checkup Coming Soon</h2>
-            <p class="text-neutral-700 mb-6">
-              We're building an interactive security assessment tool that will analyze your current setup and provide personalized recommendations.
-            </p>
-            
-            <div class="text-left max-w-md mx-auto space-y-3 mb-6">
-              <h3 class="font-semibold mb-3">The checkup will cover:</h3>
-              <div class="flex items-start">
-                <div class="bg-primary rounded-full p-1 mr-3 mt-0.5">
-                  <svg class="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                </div>
-                <p class="text-sm">Device lock settings (PIN, biometrics, auto-lock)</p>
-              </div>
-              <div class="flex items-start">
-                <div class="bg-primary rounded-full p-1 mr-3 mt-0.5">
-                  <svg class="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                </div>
-                <p class="text-sm">Find My Device/iPhone activation status</p>
-              </div>
-              <div class="flex items-start">
-                <div class="bg-primary rounded-full p-1 mr-3 mt-0.5">
-                  <svg class="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                </div>
-                <p class="text-sm">SIM card PIN protection</p>
-              </div>
-              <div class="flex items-start">
-                <div class="bg-primary rounded-full p-1 mr-3 mt-0.5">
-                  <svg class="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                </div>
-                <p class="text-sm">Banking app security settings</p>
-              </div>
-              <div class="flex items-start">
-                <div class="bg-primary rounded-full p-1 mr-3 mt-0.5">
-                  <svg class="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                </div>
-                <p class="text-sm">Backup and recovery options</p>
-              </div>
-              <div class="flex items-start">
-                <div class="bg-primary rounded-full p-1 mr-3 mt-0.5">
-                  <svg class="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                </div>
-                <p class="text-sm">IMEI number documentation</p>
-              </div>
-            </div>
-            
-            <p class="text-sm text-neutral-600 mb-4">
-              You'll receive a security score and personalized recommendations for improvements.
-            </p>
-          </div>
-          
-          <!-- In the Meantime -->
-          <div class="mt-8 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <h3 class="font-semibold mb-3 flex items-center text-yellow-900">
-              <AlertCircle class="h-5 w-5 mr-2" />
-              In the Meantime
-            </h3>
-            <p class="text-neutral-700 mb-4">
-              While we build the interactive checkup, review our prevention guides to ensure you're taking the right security measures:
-            </p>
-            <a href="/prevention" class="inline-flex items-center justify-center rounded-md text-sm font-medium bg-primary text-white hover:bg-primary/90 h-10 px-4 py-2">
-              View Prevention Guides
-            </a>
-          </div>
         </div>
+        
+        <SecurityCheckup client:load />
       </div>
     </div>
   </main>
