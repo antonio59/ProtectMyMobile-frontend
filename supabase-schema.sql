@@ -1,7 +1,5 @@
 -- ProtectMyMobile Supabase Database Schema
-
--- Enable Row Level Security
-ALTER DATABASE postgres SET "app.jwt_secret" TO 'your-jwt-secret';
+-- Run this in Supabase SQL Editor
 
 -- IMEI Records Table - REMOVED (users should save locally instead)
 
