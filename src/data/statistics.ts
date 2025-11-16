@@ -47,3 +47,27 @@ export const theftStatistics = {
     { type: "Other", percentage: 7 },
   ],
 };
+
+// Based on Met Police, BBC News, and Home Office data (2024)
+export const keyStatistics = {
+  // Met Police reported 80,588 phones stolen in London in 2024
+  londonThefts2024: "80,588",
+  
+  // Up from 28,609 in 2020 (Met Police data)
+  increaseFrom2020: "182%",
+  
+  // Met Police: Only 1% of phone thefts result in charge/conviction
+  chargeRate: "1%",
+  
+  // 80,000 phones per year ÷ 365 days ÷ 24 hours ÷ 60 minutes ≈ 1 every 6.5 minutes
+  theftFrequency: "1 every 6 minutes",
+  
+  // Estimated UK-wide based on London being 75% of national total
+  ukEstimate: "107,000+",
+  
+  sources: [
+    "Met Police Statistics (2024)",
+    "BBC News Reports",
+    "Home Office Crime Data"
+  ]
+};

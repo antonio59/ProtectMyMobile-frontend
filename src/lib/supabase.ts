@@ -346,3 +346,58 @@ export async function getAdminActions() {
   if (error) throw error;
   return data as AdminAction[];
 }
+
+// =====================================================
+// BANKS & MOBILE PROVIDERS
+// =====================================================
+
+export interface Bank {
+  id: string;
+  name: string;
+  phone: string | null;
+  website: string;
+  fraud_contact: string | null;
+  category: 'high_street' | 'online' | 'building_society' | 'challenger';
+  logo_url: string | null;
+  active: boolean;
+  last_verified: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MobileProvider {
+  id: string;
+  name: string;
+  phone: string | null;
+  website: string;
+  theft_contact: string | null;
+  network: 'EE' | 'Vodafone' | 'O2' | 'Three' | 'MVNO';
+  is_mvno: boolean;
+  parent_network: string | null;
+  active: boolean;
+  last_verified: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function getBanks() {
+  const { data, error } = await supabase
+    .from('banks')
+    .select('*')
+    .eq('active', true)
+    .order('name');
+  
+  if (error) throw error;
+  return data as Bank[];
+}
+
+export async function getMobileProviders() {
+  const { data, error } = await supabase
+    .from('mobile_providers')
+    .select('*')
+    .eq('active', true)
+    .order('name');
+  
+  if (error) throw error;
+  return data as MobileProvider[];
+}
