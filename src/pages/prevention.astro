@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { Card, CardContent } from "@/components/ui/card";
-import { IdCard, Fingerprint, Lock, ShieldCheck, AlertCircle } from "lucide-react";
+import { Shield, IdCard, Fingerprint, Lock, ShieldCheck, AlertCircle } from "lucide-react";
 ---
 
 <Layout 
@@ -15,18 +15,25 @@ import { IdCard, Fingerprint, Lock, ShieldCheck, AlertCircle } from "lucide-reac
   <main class="bg-[#f3f2f1]">
     <div class="container mx-auto px-4 py-6">
       <div class="mb-8">
-        <h2 class="text-2xl font-bold mb-4">Protect Your Device</h2>
-        <p class="text-neutral-700 mb-6">
+        <h1 class="flex items-center text-3xl md:text-4xl font-bold mb-4">
+          <Shield class="h-10 w-10 mr-3 flex-shrink-0 text-primary" />
+          Prevention Guides
+        </h1>
+        <p class="text-xl text-neutral-600 mb-6">
           Take these preventative measures to secure your phone and minimise risk in case of theft.
         </p>
+        
+        <h2 class="text-2xl font-bold mb-4">Essential Security Measures</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <!-- Secure SIM Card -->
           <div class="bg-white rounded-lg shadow-md p-6">
-            <div class="text-primary mb-4">
-              <IdCard className="h-8 w-8" />
-            </div>
-            <h3 class="text-xl font-semibold mb-2">Secure Your SIM Card</h3>
+            <h3 class="flex items-center text-xl font-semibold mb-4">
+              <div class="bg-primary/10 rounded-full p-2 mr-3 flex-shrink-0">
+                <IdCard className="h-6 w-6 text-primary" />
+              </div>
+              Secure Your SIM Card
+            </h3>
             <p class="text-neutral-700 mb-4">
               Set a PIN for your SIM card to prevent unauthorised use if stolen.
             </p>
@@ -50,10 +57,12 @@ import { IdCard, Fingerprint, Lock, ShieldCheck, AlertCircle } from "lucide-reac
           
           <!-- Biometric Authentication -->
           <div class="bg-white rounded-lg shadow-md p-6">
-            <div class="text-primary mb-4">
-              <Fingerprint className="h-8 w-8" />
-            </div>
-            <h3 class="text-xl font-semibold mb-2">Use Biometric Authentication</h3>
+            <h3 class="flex items-center text-xl font-semibold mb-4">
+              <div class="bg-primary/10 rounded-full p-2 mr-3 flex-shrink-0">
+                <Fingerprint className="h-6 w-6 text-primary" />
+              </div>
+              Use Biometric Authentication
+            </h3>
             <p class="text-neutral-700 mb-4">
               Set up fingerprint or face recognition alongside a strong passcode.
             </p>
@@ -71,10 +80,12 @@ import { IdCard, Fingerprint, Lock, ShieldCheck, AlertCircle } from "lucide-reac
           
           <!-- App-Specific Security -->
           <div class="bg-white rounded-lg shadow-md p-6">
-            <div class="text-primary mb-4">
-              <Lock className="h-8 w-8" />
-            </div>
-            <h3 class="text-xl font-semibold mb-2">Set App-Specific Security</h3>
+            <h3 class="flex items-center text-xl font-semibold mb-4">
+              <div class="bg-primary/10 rounded-full p-2 mr-3 flex-shrink-0">
+                <Lock className="h-6 w-6 text-primary" />
+              </div>
+              Set App-Specific Security
+            </h3>
             <p class="text-neutral-700 mb-4">
               Enable additional security for banking and payment apps.
             </p>
@@ -96,7 +107,7 @@ import { IdCard, Fingerprint, Lock, ShieldCheck, AlertCircle } from "lucide-reac
         <div class="border border-primary rounded-lg p-6 mb-8 bg-gradient-to-r from-primary/5 to-transparent">
           <div class="flex flex-col md:flex-row items-center">
             <div class="flex-1 mb-4 md:mb-0 md:mr-6">
-              <h3 class="text-xl font-semibold mb-2">How secure is your phone?</h3>
+              <h3 class="flex items-center text-xl font-semibold mb-2">How secure is your phone?</h3>
               <p class="text-neutral-700">Complete our quick assessment to identify security gaps and get personalised recommendations.</p>
             </div>
             <div>
@@ -109,8 +120,10 @@ import { IdCard, Fingerprint, Lock, ShieldCheck, AlertCircle } from "lucide-reac
         
         <!-- IMEI Information -->
         <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h3 class="text-xl font-semibold mb-4 flex items-center">
-            <ShieldCheck className="h-6 w-6 text-primary mr-2" />
+          <h3 class="flex items-center text-xl font-semibold mb-4">
+            <div class="bg-primary/10 rounded-full p-2 mr-3 flex-shrink-0">
+              <ShieldCheck className="h-6 w-6 text-primary" />
+            </div>
             Know Your IMEI Number
           </h3>
           <p class="text-neutral-700 mb-4">
@@ -118,7 +131,7 @@ import { IdCard, Fingerprint, Lock, ShieldCheck, AlertCircle } from "lucide-reac
           </p>
           
           <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
-            <h4 class="font-medium mb-3 text-blue-900">How to find your IMEI:</h4>
+            <h4 class="flex items-center font-medium mb-3 text-blue-900">How to find your IMEI:</h4>
             <ul class="list-disc pl-5 text-blue-800 space-y-2">
               <li><strong>Easiest:</strong> Dial <code class="bg-blue-100 px-2 py-1 rounded">*#06#</code> on your phone's keypad - the number appears instantly</li>
               <li><strong>In settings:</strong> Go to Settings → About Phone/General → IMEI</li>

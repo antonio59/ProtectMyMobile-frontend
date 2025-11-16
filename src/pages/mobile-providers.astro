@@ -2,8 +2,35 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { mobileProviders } from '@/data/mobileProviders';
+import { getMobileProviders } from '../lib/supabase';
 import { Phone, Search, Globe, AlertCircle } from 'lucide-react';
+
+// Fetch providers from Supabase
+const providersData = await getMobileProviders();
+
+// Map Supabase data to match old format
+const mobileProviders = providersData.map(provider => ({
+  id: provider.id,
+  name: provider.name,
+  colour: '#1d4ed8', // Default blue
+  initial: provider.name.charAt(0).toUpperCase(),
+  emergencyContact: {
+    uk: provider.phone || 'Online only - web chat',
+    available: provider.phone ? 'Available 24/7' : 'Support via online account only',
+  },
+  network: provider.network,
+  website: provider.website,
+  is_mvno: provider.is_mvno,
+  // Default steps
+  steps: [
+    provider.phone ? 'Call customer services to report your SIM stolen' : 'Log into your account on another device',
+    'Request to block your SIM card immediately',
+    'Change your account PIN codes or passwords',
+    'Request a replacement SIM card',
+    'Ask them to note that your device was stolen',
+  ],
+  additionalInfo: !provider.phone ? `${provider.name} doesn't have a call centre - all support is provided online through your account or web chat.` : null,
+}));
 
 // Sort providers alphabetically
 const sortedProviders = [...mobileProviders].sort((a, b) => a.name.localeCompare(b.name));
@@ -21,12 +48,12 @@ const networks = ['All', 'EE', 'O2', 'Three', 'Vodafone'];
   <main class="bg-[#f3f2f1]">
     <div class="container mx-auto px-4 py-6">
       <div class="mb-8">
-        <h2 class="text-2xl font-bold mb-4 flex items-center">
-          <Phone class="h-7 w-7 mr-2 text-primary" />
+        <h1 class="flex items-center text-3xl md:text-4xl font-bold mb-4">
+          <Phone class="h-10 w-10 mr-3 flex-shrink-0 text-primary" />
           Mobile Provider Directory
-        </h2>
+        </h1>
         <p class="text-neutral-700 mb-6">
-          Find your mobile provider to report your stolen SIM and request a block on your number.
+          Find your mobile provider from {sortedProviders.length} networks to report your stolen SIM and request a block on your number.
         </p>
         
         <!-- Search Box -->
@@ -44,13 +71,14 @@ const networks = ['All', 'EE', 'O2', 'Three', 'Vodafone'];
         
         <!-- Network Filter Tabs -->
         <div class="mb-6 flex flex-wrap gap-2">
-          {networks.map(network => (
+          {networks.map((network, index) => (
             <button
-              class="network-filter px-4 py-2 rounded-full text-sm font-medium transition-colors"
-              data-network={network}
-              class:list={[
-                network === 'All' ? 'bg-primary text-white' : 'bg-neutral-200 text-neutral-700 hover:bg-neutral-300'
-              ]}
+              class={`network-filter px-4 py-2 rounded-lg transition-colors ${
+                index === 0
+                  ? 'bg-primary text-white'
+                  : 'bg-neutral-200 text-neutral-700 hover:bg-neutral-300'
+              }`}
+              data-network={network.toLowerCase()}
             >
               {network}
             </button>
@@ -60,7 +88,10 @@ const networks = ['All', 'EE', 'O2', 'Three', 'Vodafone'];
         <!-- Providers List -->
         <div class="space-y-4" id="provider-list">
           {sortedProviders.map(provider => (
-            <div class="provider-card bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow" data-network={provider.network}>
+            <div 
+              class="provider-card bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+              data-network={provider.network.toLowerCase()}
+            >
               <div class="flex items-start">
                 <!-- Provider Initial Circle -->
                 <div 
@@ -73,8 +104,10 @@ const networks = ['All', 'EE', 'O2', 'Three', 'Vodafone'];
                 <div class="flex-1">
                   <div class="flex items-start justify-between mb-3">
                     <div>
-                      <h3 class="text-xl font-semibold">{provider.name}</h3>
-                      <p class="text-sm text-neutral-600">Network: {provider.network}</p>
+                      <h3 class="flex items-center text-xl font-semibold">{provider.name}</h3>
+                      <p class="text-sm text-neutral-600">
+                        Network: {provider.network} {provider.is_mvno && '(MVNO)'}
+                      </p>
                     </div>
                     <a 
                       href={provider.website} 
@@ -89,15 +122,16 @@ const networks = ['All', 'EE', 'O2', 'Three', 'Vodafone'];
                   
                   <!-- Emergency Contacts -->
                   <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-                    <h4 class="font-semibold text-red-900 mb-2 flex items-center">
+                    <h4 class="flex items-center font-semibold text-red-900 mb-2 flex items-center">
                       <Phone class="h-4 w-4 mr-1" />
-                      Emergency Contacts
+                      Emergency Contact
                     </h4>
                     <div class="space-y-1 text-sm">
-                      <p><strong>UK:</strong> <a href={`tel:${provider.emergencyContact.uk}`} class="text-red-700 hover:underline">{provider.emergencyContact.uk}</a></p>
-                      {provider.emergencyContact.abroad && (
-                        <p><strong>From Abroad:</strong> <a href={`tel:${provider.emergencyContact.abroad}`} class="text-red-700 hover:underline">{provider.emergencyContact.abroad}</a></p>
-                      )}
+                      <p><strong>UK:</strong> {provider.emergencyContact.uk.startsWith('Online') ? (
+                        <span class="text-red-700">{provider.emergencyContact.uk}</span>
+                      ) : (
+                        <a href={`tel:${provider.emergencyContact.uk}`} class="text-red-700 hover:underline">{provider.emergencyContact.uk}</a>
+                      )}</p>
                       <p class="text-neutral-600 italic">{provider.emergencyContact.available}</p>
                     </div>
                   </div>
@@ -106,7 +140,7 @@ const networks = ['All', 'EE', 'O2', 'Three', 'Vodafone'];
                   <div class="mb-3">
                     <h4 class="font-semibold mb-2">Steps to Take:</h4>
                     <ol class="list-decimal pl-5 text-neutral-700 space-y-1 text-sm">
-                      {provider.steps.map((step: string) => (
+                      {provider.steps.map(step => (
                         <li>{step}</li>
                       ))}
                     </ol>
@@ -126,16 +160,16 @@ const networks = ['All', 'EE', 'O2', 'Three', 'Vodafone'];
         
         <!-- Important Notes -->
         <div class="mt-8 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <h3 class="font-semibold mb-3 flex items-center text-yellow-900">
+          <h3 class="flex items-center font-semibold mb-3 flex items-center text-yellow-900">
             <AlertCircle class="h-5 w-5 mr-2" />
             Important Notes:
           </h3>
           <ul class="list-disc pl-5 space-y-2 text-neutral-700">
-            <li>Contact your provider as soon as possible to prevent unauthorized usage</li>
-            <li>Request a replacement SIM card (usually available at stores or by post)</li>
-            <li>Ask for the call reference number for your records</li>
-            <li>Check if your provider offers theft insurance or protection</li>
-            <li>Update your contact details if your phone number changes</li>
+            <li>Report your SIM as stolen as soon as possible to prevent unauthorized use</li>
+            <li>You'll need your phone number and account details when contacting your provider</li>
+            <li>Ask for a reference number for your call/report</li>
+            <li>Request that they note your device was stolen (not just lost)</li>
+            <li>Order a replacement SIM to be sent to a safe address</li>
           </ul>
         </div>
       </div>
@@ -148,46 +182,52 @@ const networks = ['All', 'EE', 'O2', 'Three', 'Vodafone'];
     // Search functionality
     const searchInput = document.getElementById('provider-search') as HTMLInputElement;
     const providerList = document.getElementById('provider-list');
-    const filterButtons = document.querySelectorAll('.network-filter');
-    let activeNetwork = 'All';
+    const networkButtons = document.querySelectorAll('.network-filter');
+    let currentNetwork = 'all';
     
-    function filterProviders() {
-      const query = searchInput?.value.toLowerCase() || '';
-      const providerCards = document.querySelectorAll('.provider-card');
-      
-      providerCards.forEach((card) => {
-        const cardElement = card as HTMLElement;
-        const providerName = cardElement.textContent?.toLowerCase() || '';
-        const providerNetwork = cardElement.dataset.network || '';
-        
-        const matchesSearch = providerName.includes(query);
-        const matchesNetwork = activeNetwork === 'All' || providerNetwork === activeNetwork;
-        
-        cardElement.style.display = matchesSearch && matchesNetwork ? '' : 'none';
+    if (searchInput && providerList) {
+      searchInput.addEventListener('input', (e) => {
+        const query = (e.target as HTMLInputElement).value.toLowerCase();
+        filterProviders(query, currentNetwork);
       });
     }
-    
-    // Search input
-    if (searchInput) {
-      searchInput.addEventListener('input', filterProviders);
-    }
-    
-    // Network filter buttons
-    filterButtons.forEach(button => {
+
+    // Network filter
+    networkButtons.forEach(button => {
       button.addEventListener('click', (e) => {
-        const clickedButton = e.target as HTMLElement;
-        activeNetwork = clickedButton.dataset.network || 'All';
+        const network = (e.target as HTMLButtonElement).dataset.network || 'all';
+        currentNetwork = network;
         
         // Update button styles
-        filterButtons.forEach(btn => {
+        networkButtons.forEach(btn => {
           btn.classList.remove('bg-primary', 'text-white');
           btn.classList.add('bg-neutral-200', 'text-neutral-700');
         });
-        clickedButton.classList.remove('bg-neutral-200', 'text-neutral-700');
-        clickedButton.classList.add('bg-primary', 'text-white');
+        (e.target as HTMLButtonElement).classList.remove('bg-neutral-200', 'text-neutral-700');
+        (e.target as HTMLButtonElement).classList.add('bg-primary', 'text-white');
         
-        filterProviders();
+        // Filter providers
+        const searchQuery = searchInput?.value.toLowerCase() || '';
+        filterProviders(searchQuery, network);
       });
     });
+
+    function filterProviders(searchQuery: string, network: string) {
+      const providerCards = document.querySelectorAll('.provider-card');
+      
+      providerCards.forEach((card) => {
+        const providerName = card.textContent?.toLowerCase() || '';
+        const providerNetwork = (card as HTMLElement).dataset.network || '';
+        
+        const matchesSearch = providerName.includes(searchQuery);
+        const matchesNetwork = network === 'all' || providerNetwork === network;
+        
+        if (matchesSearch && matchesNetwork) {
+          (card as HTMLElement).style.display = '';
+        } else {
+          (card as HTMLElement).style.display = 'none';
+        }
+      });
+    }
   </script>
 </Layout>

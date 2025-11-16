@@ -31,6 +31,15 @@ function formatDate(dateString: string) {
     year: 'numeric'
   });
 }
+
+// Category border colors for visual coding
+const categoryBorderColors: Record<string, string> = {
+  arrest: 'border-red-500',
+  law_changes: 'border-orange-500',
+  statistics: 'border-purple-500',
+  prevention_tip: 'border-green-500',
+  news: 'border-blue-500',
+}
 ---
 
 <Layout 
@@ -44,29 +53,29 @@ function formatDate(dateString: string) {
       
       <!-- Hero Section - Simplified -->
       <section class="bg-gradient-to-br from-primary to-blue-700 text-white rounded-2xl shadow-xl p-8 md:p-12 mb-12">
-        <div class="max-w-4xl">
-          <h1 class="text-4xl md:text-5xl font-bold mb-4">
+        <div class="max-w-5xl">
+          <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
             Protect Your Mobile. Secure Your Digital Life.
           </h1>
-          <p class="text-xl mb-8 text-blue-50">
-            Over 200,000 phones stolen in the UK every year. Get the tools and guidance you need to stay safe.
+          <p class="text-base sm:text-lg md:text-xl mb-8 max-w-3xl text-blue-50">
+            Over 80,000 phones stolen in London every year. Get the tools and guidance you need to stay safe.
           </p>
           
           <!-- Primary Actions -->
           <div class="flex flex-col sm:flex-row gap-4">
             <a 
               href="/prevention" 
-              class="inline-flex items-center justify-center px-8 py-4 bg-white text-primary rounded-lg font-semibold hover:bg-blue-50 transition-colors shadow-lg"
+              class="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base bg-white text-primary rounded-lg font-semibold hover:bg-blue-50 transition-colors shadow-lg"
             >
-              <Shield class="h-5 w-5 mr-2" />
-              Protect Your Phone
+              <Shield class="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+              <span>Protect Your Phone</span>
             </a>
             <a 
               href="/emergency" 
-              class="inline-flex items-center justify-center px-8 py-4 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors shadow-lg"
+              class="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors shadow-lg"
             >
-              <AlertTriangle class="h-5 w-5 mr-2" />
-              Phone Stolen? Act Now
+              <AlertTriangle class="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+              <span>Phone Stolen? Act Now</span>
             </a>
           </div>
         </div>
@@ -75,7 +84,7 @@ function formatDate(dateString: string) {
       <!-- What's New Section - Featured -->
       <section class="mb-12">
         <div class="flex items-center justify-between mb-6">
-          <h2 class="text-3xl font-bold text-neutral-900">What's New</h2>
+          <h2 class="flex items-center text-3xl font-bold text-neutral-900">What's New</h2>
           <a href="/news" class="text-primary hover:underline font-medium flex items-center">
             View All News <ArrowRight class="h-4 w-4 ml-1" />
           </a>
@@ -85,21 +94,11 @@ function formatDate(dateString: string) {
           <!-- Latest News Posts -->
           {latestNews.length > 0 ? (
             latestNews.map((post: any) => (
-              <a href={`/news/${post.slug}`} class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden group">
-                {post.featured_image_url ? (
-                  <img 
-                    src={post.featured_image_url} 
-                    alt={post.title}
-                    class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                ) : (
-                  <div class="w-full h-48 bg-gradient-to-br from-primary/20 to-blue-600/20 flex items-center justify-center">
-                    <Newspaper class="h-20 w-20 text-primary/40" />
-                  </div>
-                )}
+              <a href={`/news/${post.slug}`} class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden group border-l-4 border-blue-500">
+                
                 <div class="p-6">
                   <div class="flex items-center gap-2 mb-3">
-                    <Newspaper class="h-4 w-4 text-blue-600" />
+                    <Newspaper class="h-4 w-4 text-blue-600 flex-shrink-0" />
                     <span class="text-xs text-neutral-500 uppercase font-medium">{post.category.replace('_', ' ')}</span>
                     <span class="text-xs text-neutral-400">•</span>
                     <span class="text-xs text-neutral-500">{formatDate(post.published_at || post.created_at)}</span>
@@ -107,7 +106,7 @@ function formatDate(dateString: string) {
                   <h3 class="text-lg font-semibold mb-2 group-hover:text-primary transition-colors line-clamp-2">
                     {post.title}
                   </h3>
-                  <p class="text-neutral-600 text-sm line-clamp-3">
+                  <p class="text-neutral-600 text-sm line-clamp-3 leading-relaxed">
                     {post.excerpt}
                   </p>
                 </div>
@@ -116,7 +115,7 @@ function formatDate(dateString: string) {
           ) : (
             <div class="col-span-3 bg-blue-50 border border-blue-200 rounded-lg p-12 text-center">
               <Newspaper class="h-16 w-16 text-blue-400 mx-auto mb-4" />
-              <h3 class="text-xl font-semibold text-blue-900 mb-2">News Coming Soon</h3>
+              <h3 class="flex items-center text-xl font-semibold text-blue-900 mb-2">News Coming Soon</h3>
               <p class="text-blue-700 mb-4">We're preparing the latest updates on UK mobile theft trends, arrests, and policy changes.</p>
               <a href="/news" class="text-primary hover:underline font-medium">Check back soon →</a>
             </div>
@@ -131,10 +130,10 @@ function formatDate(dateString: string) {
             <div class="flex items-start justify-between">
               <div class="flex-1">
                 <div class="inline-flex items-center gap-2 bg-white/20 rounded-full px-4 py-2 mb-4">
-                  <MapPin class="h-5 w-5" />
+                  <MapPin class="h-5 w-5 mr-2 sm:mr-3 flex-shrink-0" />
                   <span class="font-medium">NEW FEATURE</span>
                 </div>
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                <h2 class="flex items-center text-3xl md:text-4xl font-bold mb-4">
                   UK Theft Hotspots Timelapse
                 </h2>
                 <p class="text-xl text-purple-100 mb-6 max-w-2xl">
@@ -142,7 +141,7 @@ function formatDate(dateString: string) {
                   See patterns emerge over time and identify high-risk areas.
                 </p>
                 <div class="inline-flex items-center gap-2 text-lg font-semibold group-hover:gap-4 transition-all">
-                  Explore the Map <ArrowRight class="h-5 w-5" />
+                  Explore the Map <ArrowRight class="h-5 w-5 mr-2 sm:mr-3 flex-shrink-0" />
                 </div>
               </div>
               <div class="hidden md:block">
@@ -156,21 +155,25 @@ function formatDate(dateString: string) {
       <!-- Quick Stats -->
       <section class="mb-12">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div class="bg-white rounded-lg shadow-md p-6 text-center">
-            <div class="text-3xl font-bold text-red-600 mb-1">200,000+</div>
-            <div class="text-sm text-neutral-600">Phones stolen yearly</div>
+          <div class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-lg transition-shadow">
+            <div class="text-3xl md:text-4xl font-bold text-red-600 mb-2">80,588</div>
+            <div class="text-sm md:text-base text-neutral-600 leading-tight">Phones stolen<br/>in London (2024)</div>
+            <div class="mt-2 text-xs text-neutral-400">Met Police data</div>
           </div>
-          <div class="bg-white rounded-lg shadow-md p-6 text-center">
-            <div class="text-3xl font-bold text-orange-600 mb-1">26%</div>
-            <div class="text-sm text-neutral-600">Increase in 3 years</div>
+          <div class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-lg transition-shadow">
+            <div class="text-3xl md:text-4xl font-bold text-orange-600 mb-2">182%</div>
+            <div class="text-sm md:text-base text-neutral-600 leading-tight">Increase<br/>since 2020</div>
+            <div class="mt-2 text-xs text-neutral-400">Met Police data</div>
           </div>
-          <div class="bg-white rounded-lg shadow-md p-6 text-center">
-            <div class="text-3xl font-bold text-blue-600 mb-1">5%</div>
-            <div class="text-sm text-neutral-600">Recovery rate</div>
+          <div class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-lg transition-shadow">
+            <div class="text-3xl md:text-4xl font-bold text-blue-600 mb-2">1%</div>
+            <div class="text-sm md:text-base text-neutral-600 leading-tight">Result in<br/>charges</div>
+            <div class="mt-2 text-xs text-neutral-400">Met Police data</div>
           </div>
-          <div class="bg-white rounded-lg shadow-md p-6 text-center">
-            <div class="text-3xl font-bold text-purple-600 mb-1">£500M</div>
-            <div class="text-sm text-neutral-600">Annual value lost</div>
+          <div class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-lg transition-shadow">
+            <div class="text-3xl md:text-4xl font-bold text-purple-600 mb-2">1 in 6</div>
+            <div class="text-sm md:text-base text-neutral-600 leading-tight">Minutes<br/>(theft rate)</div>
+            <div class="mt-2 text-xs text-neutral-400">Calculated</div>
           </div>
         </div>
         <div class="text-center mt-4">
@@ -183,7 +186,7 @@ function formatDate(dateString: string) {
 
       <!-- Core Resources - Clean 2x2 Grid -->
       <section class="mb-12">
-        <h2 class="text-3xl font-bold text-neutral-900 mb-6">Essential Resources</h2>
+        <h2 class="flex items-center text-3xl font-bold text-neutral-900 mb-6">Essential Resources</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- Prevention -->
@@ -193,12 +196,12 @@ function formatDate(dateString: string) {
                 <Shield class="h-8 w-8 text-primary" />
               </div>
               <div class="flex-1">
-                <h3 class="text-2xl font-semibold mb-2">Prevention Guides</h3>
+                <h3 class="flex items-center text-2xl font-semibold mb-2">Prevention Guides</h3>
                 <p class="text-neutral-600 mb-4">
                   Secure your device with PIN locks, SIM protection, and app security. Learn how to prevent theft before it happens.
                 </p>
                 <a href="/prevention" class="text-primary font-medium hover:underline flex items-center">
-                  Learn How to Protect Your Phone <ArrowRight class="h-4 w-4 ml-1" />
+                  Learn How to <span>Protect Your Phone</span> <ArrowRight class="h-4 w-4 ml-1" />
                 </a>
               </div>
             </div>
@@ -211,7 +214,7 @@ function formatDate(dateString: string) {
                 <AlertTriangle class="h-8 w-8 text-red-600" />
               </div>
               <div class="flex-1">
-                <h3 class="text-2xl font-semibold mb-2">Emergency Response</h3>
+                <h3 class="flex items-center text-2xl font-semibold mb-2">Emergency Response</h3>
                 <p class="text-neutral-600 mb-4">
                   Phone stolen? Follow our 5-step emergency checklist to lock your device, secure accounts, and report the theft.
                 </p>
@@ -229,7 +232,7 @@ function formatDate(dateString: string) {
                 <Building2 class="h-8 w-8 text-blue-600" />
               </div>
               <div class="flex-1">
-                <h3 class="text-2xl font-semibold mb-2">UK Bank Contacts</h3>
+                <h3 class="flex items-center text-2xl font-semibold mb-2">UK Bank Contacts</h3>
                 <p class="text-neutral-600 mb-4">
                   Emergency contact numbers for 25+ UK banks. Secure your accounts and prevent fraud immediately.
                 </p>
@@ -247,7 +250,7 @@ function formatDate(dateString: string) {
                 <Phone class="h-8 w-8 text-green-600" />
               </div>
               <div class="flex-1">
-                <h3 class="text-2xl font-semibold mb-2">Mobile Networks</h3>
+                <h3 class="flex items-center text-2xl font-semibold mb-2">Mobile Networks</h3>
                 <p class="text-neutral-600 mb-4">
                   Contact details for 50+ UK mobile providers. Block your SIM and prevent unauthorized usage.
                 </p>
@@ -262,7 +265,7 @@ function formatDate(dateString: string) {
 
       <!-- More Resources CTA -->
       <section class="bg-white rounded-xl shadow-md p-8 text-center">
-        <h3 class="text-2xl font-semibold mb-3">Looking for More Resources?</h3>
+        <h3 class="flex items-center text-2xl font-semibold mb-3">Looking for More Resources?</h3>
         <p class="text-neutral-600 mb-6 max-w-2xl mx-auto">
           Access our complete library of guides, tools, community stories, and expert advice.
         </p>

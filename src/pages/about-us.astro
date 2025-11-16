@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { Heart, Shield, Users, Target } from 'lucide-react';
+import { Info, Heart, Shield, Users, Target } from 'lucide-react';
 ---
 
 <Layout 
@@ -14,14 +14,17 @@ import { Heart, Shield, Users, Target } from 'lucide-react';
   <main class="bg-[#f3f2f1]">
     <div class="container mx-auto px-4 py-8">
       <div class="max-w-4xl mx-auto">
-        <h1 class="text-3xl font-bold mb-6">About ProtectMyMobile</h1>
+        <h1 class="flex items-center text-3xl md:text-4xl font-bold mb-6">
+          <Info class="h-10 w-10 mr-3 flex-shrink-0 text-primary" />
+          About ProtectMyMobile
+        </h1>
         
         <!-- Mission Statement -->
         <div class="bg-white rounded-lg shadow-md p-8 mb-8">
-          <div class="text-primary mb-4">
-            <Target class="h-12 w-12" />
-          </div>
-          <h2 class="text-2xl font-semibold mb-4">Our Mission</h2>
+          <h2 class="flex items-center text-2xl font-semibold mb-4">
+            <Target class="h-12 w-12 mr-3 flex-shrink-0" style={{ color: '#2563eb' }} />
+            Our Mission
+          </h2>
           <p class="text-lg text-neutral-700 mb-4">
             ProtectMyMobile exists to empower UK residents with the knowledge and tools to protect their mobile devices from theft and respond effectively when theft occurs.
           </p>
@@ -34,30 +37,30 @@ import { Heart, Shield, Users, Target } from 'lucide-react';
         <h2 class="text-2xl font-semibold mb-6">Our Values</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div class="bg-white rounded-lg shadow-md p-6">
-            <div class="text-primary mb-3">
-              <Shield class="h-8 w-8" />
-            </div>
-            <h3 class="text-xl font-semibold mb-2">Privacy First</h3>
+            <h3 class="flex items-center text-xl font-semibold mb-3">
+              <Shield class="h-8 w-8 mr-2 sm:mr-3 flex-shrink-0" style={{ color: '#2563eb' }} />
+              Privacy First
+            </h3>
             <p class="text-neutral-700">
               We don't store your IMEI numbers or personal device information. Your privacy is paramount.
             </p>
           </div>
           
           <div class="bg-white rounded-lg shadow-md p-6">
-            <div class="text-primary mb-3">
-              <Users class="h-8 w-8" />
-            </div>
-            <h3 class="text-xl font-semibold mb-2">Community Driven</h3>
+            <h3 class="flex items-center text-xl font-semibold mb-3">
+              <Users class="h-8 w-8 mr-2 sm:mr-3 flex-shrink-0" style={{ color: '#16a34a' }} />
+              Community Driven
+            </h3>
             <p class="text-neutral-700">
               We learn from real experiences and feedback to continuously improve our guidance.
             </p>
           </div>
           
           <div class="bg-white rounded-lg shadow-md p-6">
-            <div class="text-primary mb-3">
-              <Heart class="h-8 w-8" />
-            </div>
-            <h3 class="text-xl font-semibold mb-2">Always Free</h3>
+            <h3 class="flex items-center text-xl font-semibold mb-3">
+              <Heart class="h-8 w-8 mr-2 sm:mr-3 flex-shrink-0" style={{ color: '#dc2626' }} />
+              Always Free
+            </h3>
             <p class="text-neutral-700">
               Essential security information should be accessible to everyone, always.
             </p>

@@ -2,11 +2,46 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { banks } from '@/data/banks';
+import { getBanks } from '../lib/supabase';
 import { Building2, Search, Phone, Globe, AlertCircle } from 'lucide-react';
+
+// Fetch banks from Supabase
+const banksData = await getBanks();
+
+// Map Supabase data to match old format for minimal template changes
+const banks = banksData.map(bank => ({
+  id: bank.id,
+  name: bank.name,
+  colour: '#1d4ed8', // Default blue - we can add colors later
+  initial: bank.name.charAt(0).toUpperCase(),
+  emergencyContact: {
+    uk: bank.phone || 'In-app chat only',
+    abroad: bank.fraud_contact || null,
+    available: 'Available 24/7',
+  },
+  website: bank.website,
+  category: bank.category,
+  // Default steps - we can enhance this later with database fields
+  steps: [
+    'Call the emergency number immediately',
+    'Report any suspicious transactions',
+    'Request to freeze your accounts/cards',
+    'Change your online banking password',
+    'Log out of all banking apps on the stolen device',
+  ],
+  additionalInfo: bank.phone ? null : 'This bank offers support primarily through in-app chat or web messaging.',
+}));
 
 // Sort banks alphabetically
 const sortedBanks = [...banks].sort((a, b) => a.name.localeCompare(b.name));
+
+// Group by category for filtering
+const categories = {
+  high_street: sortedBanks.filter(b => b.category === 'high_street'),
+  online: sortedBanks.filter(b => b.category === 'online'),
+  building_society: sortedBanks.filter(b => b.category === 'building_society'),
+  challenger: sortedBanks.filter(b => b.category === 'challenger'),
+};
 ---
 
 <Layout 
@@ -18,12 +53,12 @@ const sortedBanks = [...banks].sort((a, b) => a.name.localeCompare(b.name));
   <main class="bg-[#f3f2f1]">
     <div class="container mx-auto px-4 py-6">
       <div class="mb-8">
-        <h2 class="text-2xl font-bold mb-4 flex items-center">
-          <Building2 class="h-7 w-7 mr-2 text-primary" />
+        <h1 class="flex items-center text-3xl md:text-4xl font-bold mb-4">
+          <Building2 class="h-10 w-10 mr-3 flex-shrink-0 text-primary" />
           UK Bank Directory
-        </h2>
+        </h1>
         <p class="text-neutral-700 mb-6">
-          Contact information and procedures for UK banks in case your phone is stolen.
+          Contact information and procedures for {sortedBanks.length} UK banks in case your phone is stolen.
         </p>
         
         <!-- Search Box -->
@@ -31,30 +66,49 @@ const sortedBanks = [...banks].sort((a, b) => a.name.localeCompare(b.name));
           <div class="relative">
             <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 h-5 w-5" />
             <input
-              id="bank-search"
               type="text"
-              class="w-full pl-10 pr-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              id="bank-search"
               placeholder="Search for your bank..."
+              class="w-full pl-10 pr-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
             />
           </div>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="mb-6 flex flex-wrap gap-2">
+          <button class="category-filter px-4 py-2 rounded-lg bg-primary text-white" data-category="all">
+            All Banks ({sortedBanks.length})
+          </button>
+          <button class="category-filter px-4 py-2 rounded-lg bg-neutral-200 text-neutral-700 hover:bg-neutral-300" data-category="high_street">
+            High Street ({categories.high_street.length})
+          </button>
+          <button class="category-filter px-4 py-2 rounded-lg bg-neutral-200 text-neutral-700 hover:bg-neutral-300" data-category="online">
+            Online Banks ({categories.online.length})
+          </button>
+          <button class="category-filter px-4 py-2 rounded-lg bg-neutral-200 text-neutral-700 hover:bg-neutral-300" data-category="building_society">
+            Building Societies ({categories.building_society.length})
+          </button>
+          <button class="category-filter px-4 py-2 rounded-lg bg-neutral-200 text-neutral-700 hover:bg-neutral-300" data-category="challenger">
+            Challenger Banks ({categories.challenger.length})
+          </button>
         </div>
         
         <!-- Banks List -->
         <div class="space-y-4" id="bank-list">
           {sortedBanks.map(bank => (
-            <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+            <div class="bank-card bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow" data-category={bank.category}>
               <div class="flex items-start">
                 <!-- Bank Initial Circle -->
                 <div 
                   class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl mr-4 flex-shrink-0"
-                  style={`background-color: ${bank.colour || bank.color || '#1d4ed8'}`}
+                  style={`background-color: ${bank.colour}`}
                 >
                   {bank.initial}
                 </div>
                 
                 <div class="flex-1">
                   <div class="flex items-start justify-between mb-3">
-                    <h3 class="text-xl font-semibold">{bank.name}</h3>
+                    <h3 class="flex items-center text-xl font-semibold">{bank.name}</h3>
                     <a 
                       href={bank.website} 
                       target="_blank" 
@@ -68,12 +122,16 @@ const sortedBanks = [...banks].sort((a, b) => a.name.localeCompare(b.name));
                   
                   <!-- Emergency Contacts -->
                   <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-                    <h4 class="font-semibold text-red-900 mb-2 flex items-center">
+                    <h4 class="flex items-center font-semibold text-red-900 mb-2 flex items-center">
                       <Phone class="h-4 w-4 mr-1" />
                       Emergency Contacts
                     </h4>
                     <div class="space-y-1 text-sm">
-                      <p><strong>UK:</strong> <a href={`tel:${bank.emergencyContact.uk}`} class="text-red-700 hover:underline">{bank.emergencyContact.uk}</a></p>
+                      <p><strong>UK:</strong> {bank.emergencyContact.uk.startsWith('In-app') ? (
+                        <span class="text-red-700">{bank.emergencyContact.uk}</span>
+                      ) : (
+                        <a href={`tel:${bank.emergencyContact.uk}`} class="text-red-700 hover:underline">{bank.emergencyContact.uk}</a>
+                      )}</p>
                       {bank.emergencyContact.abroad && (
                         <p><strong>From Abroad:</strong> <a href={`tel:${bank.emergencyContact.abroad}`} class="text-red-700 hover:underline">{bank.emergencyContact.abroad}</a></p>
                       )}
@@ -105,7 +163,7 @@ const sortedBanks = [...banks].sort((a, b) => a.name.localeCompare(b.name));
         
         <!-- Important Notes -->
         <div class="mt-8 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <h3 class="font-semibold mb-3 flex items-center text-yellow-900">
+          <h3 class="flex items-center font-semibold mb-3 flex items-center text-yellow-900">
             <AlertCircle class="h-5 w-5 mr-2" />
             Important Notes:
           </h3>
@@ -124,23 +182,54 @@ const sortedBanks = [...banks].sort((a, b) => a.name.localeCompare(b.name));
   <Footer />
   
   <script>
-    // Simple search functionality
+    // Search functionality
     const searchInput = document.getElementById('bank-search') as HTMLInputElement;
     const bankList = document.getElementById('bank-list');
+    const categoryButtons = document.querySelectorAll('.category-filter');
+    let currentCategory = 'all';
     
     if (searchInput && bankList) {
       searchInput.addEventListener('input', (e) => {
         const query = (e.target as HTMLInputElement).value.toLowerCase();
-        const bankCards = bankList.children;
+        filterBanks(query, currentCategory);
+      });
+    }
+
+    // Category filter
+    categoryButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        const category = (e.target as HTMLButtonElement).dataset.category || 'all';
+        currentCategory = category;
         
-        Array.from(bankCards).forEach((card) => {
-          const bankName = card.textContent?.toLowerCase() || '';
-          if (bankName.includes(query)) {
-            (card as HTMLElement).style.display = '';
-          } else {
-            (card as HTMLElement).style.display = 'none';
-          }
+        // Update button styles
+        categoryButtons.forEach(btn => {
+          btn.classList.remove('bg-primary', 'text-white');
+          btn.classList.add('bg-neutral-200', 'text-neutral-700');
         });
+        (e.target as HTMLButtonElement).classList.remove('bg-neutral-200', 'text-neutral-700');
+        (e.target as HTMLButtonElement).classList.add('bg-primary', 'text-white');
+        
+        // Filter banks
+        const searchQuery = searchInput?.value.toLowerCase() || '';
+        filterBanks(searchQuery, category);
+      });
+    });
+
+    function filterBanks(searchQuery: string, category: string) {
+      const bankCards = document.querySelectorAll('.bank-card');
+      
+      bankCards.forEach((card) => {
+        const bankName = card.textContent?.toLowerCase() || '';
+        const bankCategory = (card as HTMLElement).dataset.category || '';
+        
+        const matchesSearch = bankName.includes(searchQuery);
+        const matchesCategory = category === 'all' || bankCategory === category;
+        
+        if (matchesSearch && matchesCategory) {
+          (card as HTMLElement).style.display = '';
+        } else {
+          (card as HTMLElement).style.display = 'none';
+        }
       });
     }
   </script>
