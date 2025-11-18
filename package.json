@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",
-    "@astrojs/node": "^9.5.1",
+    "@astrojs/netlify": "^6.0.0",
     "@astrojs/sitemap": "^3.6.0",
     "@nanostores/react": "^1.0.0",
     "@radix-ui/react-slot": "^1.2.4",
