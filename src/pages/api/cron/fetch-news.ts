@@ -95,7 +95,7 @@ export const GET: APIRoute = async () => {
             category: category,
             source_url: article.link,
             source_name: article.source?.trim() || 'Google News',
-            published: false
+            published: true
           }])
           .select()
           .single();
