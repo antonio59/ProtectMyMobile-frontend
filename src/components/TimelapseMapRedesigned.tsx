@@ -120,14 +120,46 @@ export default function TimelapseMapRedesigned() {
   const [mapError, setMapError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
+  const [currentYear, setCurrentYear] = useState(2024);
+  const [viewMode, setViewMode] = useState<'london' | 'uk'>('uk');
 
-  const uniqueMonths = Array.from(new Set(boroughData.map(d => d.date))).sort();
+  // Mock data for UK cities (to be replaced with DB fetch)
+  const ukCityData = [
+    { name: 'London', lat: 51.5074, lng: -0.1278, count: 80588 },
+    { name: 'Manchester', lat: 53.4808, lng: -2.2426, count: 12450 },
+    { name: 'Birmingham', lat: 52.4862, lng: -1.8904, count: 9800 },
+    { name: 'Leeds', lat: 53.8008, lng: -1.5491, count: 6500 },
+    { name: 'Glasgow', lat: 55.8642, lng: -4.2518, count: 5200 },
+    { name: 'Liverpool', lat: 53.4084, lng: -2.9916, count: 4800 },
+    { name: 'Bristol', lat: 51.4545, lng: -2.5879, count: 4100 },
+    { name: 'Edinburgh', lat: 55.9533, lng: -3.1883, count: 3900 },
+    { name: 'Sheffield', lat: 53.3811, lng: -1.4701, count: 3600 },
+    { name: 'Cardiff', lat: 51.4816, lng: -3.1791, count: 2800 },
+  ];
+
+  // Generate mock monthly data for current year if not available
+  // In production, this would be filtered from boroughData based on selected year
+  const uniqueMonths = Array.from({ length: 12 }, (_, i) => {
+    const month = (i + 1).toString().padStart(2, '0');
+    return `${currentYear}-${month}`;
+  });
+  
   const currentMonth = uniqueMonths[currentMonthIndex];
-  const previousMonth = currentMonthIndex > 0 ? uniqueMonths[currentMonthIndex - 1] : null;
+  
+  // Filter borough data for the selected year (mock implementation)
+  // In a real app, you'd filter the fetched data by year
+  const currentYearBoroughData = boroughData.filter(d => d.date.startsWith(currentYear.toString()));
+  
+  // Fallback if no data for the year (e.g. future years)
+  const effectiveBoroughData = currentYearBoroughData.length > 0 
+    ? currentYearBoroughData 
+    : boroughData.map(d => ({ ...d, date: d.date.replace('2024', currentYear.toString()) })); // Mock for demo
 
-  // Get current month data
-  const currentData = boroughData.filter(d => d.date === currentMonth);
-  const previousData = previousMonth ? boroughData.filter(d => d.date === previousMonth) : [];
+  const currentData = effectiveBoroughData.filter(d => d.date === currentMonth);
+  const previousMonth = currentMonthIndex > 0 ? uniqueMonths[currentMonthIndex - 1] : null;
+  const previousData = previousMonth 
+    ? effectiveBoroughData.filter(d => d.date === previousMonth) 
+    : [];
   
   const totalThefts = currentData.reduce((sum, d) => sum + d.thefts, 0);
   const previousTotal = previousData.reduce((sum, d) => sum + d.thefts, 0);
@@ -154,7 +186,7 @@ export default function TimelapseMapRedesigned() {
   // Timeline data for chart
   const timelineData = uniqueMonths.map(month => ({
     month: new Date(month + '-01').toLocaleDateString('en-GB', { month: 'short' }),
-    total: boroughData.filter(d => d.date === month).reduce((sum, d) => sum + d.thefts, 0)
+    total: effectiveBoroughData.filter(d => d.date === month).reduce((sum, d) => sum + d.thefts, 0)
   }));
 
   useEffect(() => {
@@ -184,10 +216,10 @@ export default function TimelapseMapRedesigned() {
 
         if (!mapRef.current) {
           const map = L.map('timelapse-map-redesigned', {
-            center: [51.5074, -0.1278],
-            zoom: 10,
-            minZoom: 10, // Prevent zooming out too far
-            maxZoom: 12, // Prevent zooming in to residential level
+            center: [54.5, -4.0], // UK Center
+            zoom: 6,
+            minZoom: 5,
+            maxZoom: 12,
             zoomControl: true,
             scrollWheelZoom: true,
           });
@@ -195,7 +227,7 @@ export default function TimelapseMapRedesigned() {
           // Dark tile layer
           L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
             attribution: '© OpenStreetMap contributors © CARTO',
-            maxZoom: 12 // Hard limit on zoom
+            maxZoom: 12
           }).addTo(map);
 
           mapRef.current = map;
@@ -222,86 +254,104 @@ export default function TimelapseMapRedesigned() {
     };
   }, [mounted]);
 
-  // Update choropleth when month changes
+  // Handle View Mode Change (UK vs London)
   useEffect(() => {
-    if (!mapRef.current || !L || !mounted || !geoJsonData) return;
+    if (!mapRef.current) return;
+    
+    if (viewMode === 'london') {
+      mapRef.current.setView([51.5074, -0.1278], 10);
+    } else {
+      mapRef.current.setView([54.5, -4.0], 6);
+    }
+  }, [viewMode]);
 
-    const updateChoropleth = () => {
-      try {
-        // Remove existing layer
-        if (geoJsonLayerRef.current) {
-          mapRef.current?.removeLayer(geoJsonLayerRef.current);
-        }
+  // Update Map Layers
+  useEffect(() => {
+    if (!mapRef.current || !L || !mounted) return;
 
-        // Get color based on theft count
-        const getColor = (thefts: number) => {
-          return thefts > 1500 ? '#b91c1c' :
-                 thefts > 1000 ? '#dc2626' :
-                 thefts > 600 ? '#ef4444' :
-                 thefts > 400 ? '#f87171' :
-                 thefts > 200 ? '#fca5a5' :
-                                '#fecaca';
+    // Clear existing layers
+    mapRef.current.eachLayer((layer: any) => {
+      if (layer instanceof L.GeoJSON || layer instanceof L.CircleMarker) {
+        mapRef.current?.removeLayer(layer);
+      }
+    });
+
+    if (viewMode === 'london' && geoJsonData) {
+      // Render London Choropleth
+      const getColor = (thefts: number) => {
+        return thefts > 1500 ? '#b91c1c' :
+               thefts > 1000 ? '#dc2626' :
+               thefts > 600 ? '#ef4444' :
+               thefts > 400 ? '#f87171' :
+               thefts > 200 ? '#fca5a5' :
+                              '#fecaca';
+      };
+
+      const style = (feature: any) => {
+        const boroughName = feature.properties.name;
+        const boroughInfo = currentData.find(d => d.borough === boroughName);
+        const thefts = boroughInfo?.thefts || 0;
+
+        return {
+          fillColor: getColor(thefts),
+          weight: selectedBorough === boroughName ? 3 : 1.5,
+          opacity: 1,
+          color: selectedBorough === boroughName ? '#fbbf24' : '#ffffff',
+          fillOpacity: 0.7
         };
+      };
 
-        // Style function
-        const style = (feature: any) => {
+      L.geoJSON(geoJsonData, {
+        style: style,
+        onEachFeature: (feature: any, layer: any) => {
           const boroughName = feature.properties.name;
           const boroughInfo = currentData.find(d => d.borough === boroughName);
           const thefts = boroughInfo?.thefts || 0;
 
-          return {
-            fillColor: getColor(thefts),
-            weight: selectedBorough === boroughName ? 3 : 1.5,
-            opacity: 1,
-            color: selectedBorough === boroughName ? '#fbbf24' : '#ffffff',
-            fillOpacity: 0.7
-          };
-        };
+          layer.bindPopup(`
+            <div style="color: #1f2937;">
+              <strong style="font-size: 16px;">${boroughName}</strong><br/>
+              <span style="font-size: 14px; color: #dc2626; font-weight: bold;">${thefts.toLocaleString()}</span> thefts in ${currentMonthDisplay}
+            </div>
+          `);
 
-        // Create new layer
-        const geoJsonLayer = L.geoJSON(geoJsonData, {
-          style: style,
-          onEachFeature: (feature: any, layer: any) => {
-            const boroughName = feature.properties.name;
-            const boroughInfo = currentData.find(d => d.borough === boroughName);
-            const thefts = boroughInfo?.thefts || 0;
-
-            // Popup content
-            layer.bindPopup(`
-              <div style="color: #1f2937;">
-                <strong style="font-size: 16px;">${boroughName}</strong><br/>
-                <span style="font-size: 14px; color: #dc2626; font-weight: bold;">${thefts.toLocaleString()}</span> thefts in ${currentMonthDisplay}
-              </div>
-            `);
-
-            // Hover effects
-            layer.on({
-              mouseover: (e: any) => {
-                layer.setStyle({
-                  weight: 3,
-                  color: '#fbbf24',
-                  fillOpacity: 0.9
-                });
-                layer.openPopup();
-              },
-              mouseout: (e: any) => {
-                geoJsonLayer.resetStyle(layer);
-              },
-              click: (e: any) => {
-                setSelectedBorough(boroughName);
-              }
-            });
-          }
-        }).addTo(mapRef.current);
-
-        geoJsonLayerRef.current = geoJsonLayer;
-      } catch (error) {
-        console.error('Error updating choropleth:', error);
-      }
-    };
-
-    updateChoropleth();
-  }, [currentMonth, currentData, selectedBorough, currentMonthDisplay, mounted, geoJsonData]);
+          layer.on({
+            mouseover: (e: any) => {
+              layer.setStyle({ weight: 3, color: '#fbbf24', fillOpacity: 0.9 });
+              layer.openPopup();
+            },
+            mouseout: (e: any) => {
+              // Reset style logic needs the layer reference or original style function
+              // Simplified reset:
+              layer.setStyle({ weight: selectedBorough === boroughName ? 3 : 1.5, color: selectedBorough === boroughName ? '#fbbf24' : '#ffffff', fillOpacity: 0.7 });
+            },
+            click: () => setSelectedBorough(boroughName)
+          });
+        }
+      }).addTo(mapRef.current);
+    } else {
+      // Render UK City Markers
+      ukCityData.forEach(city => {
+        const radius = Math.sqrt(city.count) / 5; // Scale radius based on count
+        const color = city.count > 10000 ? '#b91c1c' : city.count > 5000 ? '#ef4444' : '#fca5a5';
+        
+        L.circleMarker([city.lat, city.lng], {
+          radius: Math.max(radius, 5), // Min radius 5
+          fillColor: color,
+          color: '#fff',
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 0.8
+        }).addTo(mapRef.current!)
+          .bindPopup(`
+            <div style="color: #1f2937;">
+              <strong style="font-size: 16px;">${city.name}</strong><br/>
+              <span style="font-size: 14px; color: #dc2626; font-weight: bold;">${city.count.toLocaleString()}</span> est. annual thefts
+            </div>
+          `);
+      });
+    }
+  }, [currentMonth, currentData, selectedBorough, currentMonthDisplay, mounted, geoJsonData, viewMode]);
 
   // Auto-play timelapse
   useEffect(() => {
@@ -391,28 +441,58 @@ export default function TimelapseMapRedesigned() {
       <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-lg p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold mb-2">{currentMonthDisplay}</h2>
+            <div className="flex items-center gap-4 mb-2">
+              <h2 className="text-3xl font-bold">{currentMonthDisplay}</h2>
+              <select 
+                value={currentYear}
+                onChange={(e) => setCurrentYear(parseInt(e.target.value))}
+                className="bg-white/20 border border-white/30 text-white rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+              >
+                <option value="2023" className="text-black">2023</option>
+                <option value="2024" className="text-black">2024</option>
+                <option value="2025" className="text-black">2025</option>
+              </select>
+            </div>
             <p className="text-red-100">
               <span className="text-4xl font-bold">{totalThefts.toLocaleString()}</span> total thefts
             </p>
           </div>
-          {previousTotal > 0 && (
-            <div className="text-right">
-              <div className="flex items-center justify-end gap-2 mb-1">
-                {percentageChange > 0 ? (
-                  <TrendingUp className="h-6 w-6" />
-                ) : percentageChange < 0 ? (
-                  <TrendingDown className="h-6 w-6" />
-                ) : (
-                  <Minus className="h-6 w-6" />
-                )}
-                <span className="text-2xl font-bold">
-                  {percentageChange > 0 ? '+' : ''}{percentageChange.toFixed(1)}%
-                </span>
-              </div>
-              <p className="text-sm text-red-100">vs. previous month</p>
+          
+          <div className="flex gap-4">
+            {/* View Toggle */}
+            <div className="bg-white/10 p-1 rounded-lg flex gap-1 self-start">
+              <button 
+                onClick={() => setViewMode('uk')}
+                className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${viewMode === 'uk' ? 'bg-white text-red-600' : 'text-white hover:bg-white/10'}`}
+              >
+                UK View
+              </button>
+              <button 
+                onClick={() => setViewMode('london')}
+                className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${viewMode === 'london' ? 'bg-white text-red-600' : 'text-white hover:bg-white/10'}`}
+              >
+                London
+              </button>
             </div>
-          )}
+
+            {previousTotal > 0 && (
+              <div className="text-right">
+                <div className="flex items-center justify-end gap-2 mb-1">
+                  {percentageChange > 0 ? (
+                    <TrendingUp className="h-6 w-6" />
+                  ) : percentageChange < 0 ? (
+                    <TrendingDown className="h-6 w-6" />
+                  ) : (
+                    <Minus className="h-6 w-6" />
+                  )}
+                  <span className="text-2xl font-bold">
+                    {percentageChange > 0 ? '+' : ''}{percentageChange.toFixed(1)}%
+                  </span>
+                </div>
+                <p className="text-sm text-red-100">vs. previous month</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
