@@ -1,0 +1,105 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "Westminster", "code": "E09000033" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-0.1790, 51.4850], [-0.1150, 51.4850], [-0.1150, 51.5250], [-0.1790, 51.5250], [-0.1790, 51.4850]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Camden", "code": "E09000007" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-0.1800, 51.5250], [-0.0900, 51.5250], [-0.0900, 51.5650], [-0.1800, 51.5650], [-0.1800, 51.5250]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Islington", "code": "E09000019" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-0.1400, 51.5250], [-0.0600, 51.5250], [-0.0600, 51.5650], [-0.1400, 51.5650], [-0.1400, 51.5250]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Kensington and Chelsea", "code": "E09000020" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-0.2400, 51.4700], [-0.1500, 51.4700], [-0.1500, 51.5150], [-0.2400, 51.5150], [-0.2400, 51.4700]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Southwark", "code": "E09000028" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-0.1300, 51.4700], [-0.0400, 51.4700], [-0.0400, 51.5150], [-0.1300, 51.5150], [-0.1300, 51.4700]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Lambeth", "code": "E09000022" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-0.1600, 51.4350], [-0.0700, 51.4350], [-0.0700, 51.4800], [-0.1600, 51.4800], [-0.1600, 51.4350]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Hackney", "code": "E09000012" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-0.0900, 51.5250], [0.0000, 51.5250], [0.0000, 51.5750], [-0.0900, 51.5750], [-0.0900, 51.5250]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Tower Hamlets", "code": "E09000030" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-0.0400, 51.4900], [0.0300, 51.4900], [0.0300, 51.5350], [-0.0400, 51.5350], [-0.0400, 51.4900]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Newham", "code": "E09000025" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [0.0000, 51.5050], [0.0800, 51.5050], [0.0800, 51.5550], [0.0000, 51.5550], [0.0000, 51.5050]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Hammersmith and Fulham", "code": "E09000013" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-0.2800, 51.4700], [-0.1900, 51.4700], [-0.1900, 51.5150], [-0.2800, 51.5150], [-0.2800, 51.4700]
+        ]]
+      }
+    }
+  ]
+}
