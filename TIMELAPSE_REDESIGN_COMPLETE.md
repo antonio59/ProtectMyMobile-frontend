@@ -276,3 +276,15 @@ The timelapse is now:
 5. **Accessible** - Works on all devices
 
 **Ready for production deployment!** 🚀
+
+## 🛠️ Recent Fixes (Nov 18)
+
+### Timelapse Map
+- **Fixed Visuals:** Added missing `leaflet.css` import which was causing map layout issues (tiles stacking, controls unstyled).
+- **Optimized Performance:** Refactored `TimelapseMapRedesigned` to fetch GeoJSON boundary data only once on mount, instead of re-fetching on every month change. This prevents network redundancy and potential flickering.
+
+### Statistics Page
+- **Data Accuracy:** Corrected conflicting statistics in the "Additional Context" section to match the official Met Police 2024 data:
+  - "5% recovered" updated to "**1% result in charges**" (consistent with key metrics).
+  - "26% increase" updated to "**182% increase since 2020**" (consistent with key metrics).
+

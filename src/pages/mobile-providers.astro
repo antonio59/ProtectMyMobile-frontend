@@ -3,34 +3,38 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { getMobileProviders } from '../lib/supabase';
+import { mobileProviders as staticProviders } from '../data/mobileProviders';
 import { Phone, Search, Globe, AlertCircle } from 'lucide-react';
 
 // Fetch providers from Supabase
 const providersData = await getMobileProviders();
 
 // Map Supabase data to match old format
-const mobileProviders = providersData.map(provider => ({
-  id: provider.id,
-  name: provider.name,
-  colour: '#1d4ed8', // Default blue
-  initial: provider.name.charAt(0).toUpperCase(),
-  emergencyContact: {
-    uk: provider.phone || 'Online only - web chat',
-    available: provider.phone ? 'Available 24/7' : 'Support via online account only',
-  },
-  network: provider.network,
-  website: provider.website,
-  is_mvno: provider.is_mvno,
-  // Default steps
-  steps: [
-    provider.phone ? 'Call customer services to report your SIM stolen' : 'Log into your account on another device',
-    'Request to block your SIM card immediately',
-    'Change your account PIN codes or passwords',
-    'Request a replacement SIM card',
-    'Ask them to note that your device was stolen',
-  ],
-  additionalInfo: !provider.phone ? `${provider.name} doesn't have a call centre - all support is provided online through your account or web chat.` : null,
-}));
+const mobileProviders = providersData.map(provider => {
+  const staticProvider = staticProviders.find(p => p.id === provider.id || p.name === provider.name);
+  return {
+    id: provider.id,
+    name: provider.name,
+    colour: staticProvider?.colour || '#1d4ed8', // Use static color if available
+    initial: provider.name.charAt(0).toUpperCase(),
+    emergencyContact: {
+      uk: provider.phone || 'Online only - web chat',
+      available: provider.phone ? 'Available 24/7' : 'Support via online account only',
+    },
+    network: provider.network,
+    website: provider.website,
+    is_mvno: provider.is_mvno,
+    // Default steps
+    steps: [
+      provider.phone ? 'Call customer services to report your SIM stolen' : 'Log into your account on another device',
+      'Request to block your SIM card immediately',
+      'Change your account PIN codes or passwords',
+      'Request a replacement SIM card',
+      'Ask them to note that your device was stolen',
+    ],
+    additionalInfo: !provider.phone ? `${provider.name} doesn't have a call centre - all support is provided online through your account or web chat.` : null,
+  };
+});
 
 // Sort providers alphabetically
 const sortedProviders = [...mobileProviders].sort((a, b) => a.name.localeCompare(b.name));

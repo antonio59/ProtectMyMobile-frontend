@@ -3,34 +3,38 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { getBanks } from '../lib/supabase';
+import { banks as staticBanks } from '../data/banks';
 import { Building2, Search, Phone, Globe, AlertCircle } from 'lucide-react';
 
 // Fetch banks from Supabase
 const banksData = await getBanks();
 
 // Map Supabase data to match old format for minimal template changes
-const banks = banksData.map(bank => ({
-  id: bank.id,
-  name: bank.name,
-  colour: '#1d4ed8', // Default blue - we can add colors later
-  initial: bank.name.charAt(0).toUpperCase(),
-  emergencyContact: {
-    uk: bank.phone || 'In-app chat only',
-    abroad: bank.fraud_contact || null,
-    available: 'Available 24/7',
-  },
-  website: bank.website,
-  category: bank.category,
-  // Default steps - we can enhance this later with database fields
-  steps: [
-    'Call the emergency number immediately',
-    'Report any suspicious transactions',
-    'Request to freeze your accounts/cards',
-    'Change your online banking password',
-    'Log out of all banking apps on the stolen device',
-  ],
-  additionalInfo: bank.phone ? null : 'This bank offers support primarily through in-app chat or web messaging.',
-}));
+const banks = banksData.map(bank => {
+  const staticBank = staticBanks.find(b => b.id === bank.id || b.name === bank.name);
+  return {
+    id: bank.id,
+    name: bank.name,
+    colour: staticBank?.colour || staticBank?.color || '#1d4ed8', // Use static color if available
+    initial: bank.name.charAt(0).toUpperCase(),
+    emergencyContact: {
+      uk: bank.phone || 'In-app chat only',
+      abroad: bank.fraud_contact || null,
+      available: 'Available 24/7',
+    },
+    website: bank.website,
+    category: bank.category,
+    // Default steps - we can enhance this later with database fields
+    steps: [
+      'Call the emergency number immediately',
+      'Report any suspicious transactions',
+      'Request to freeze your accounts/cards',
+      'Change your online banking password',
+      'Log out of all banking apps on the stolen device',
+    ],
+    additionalInfo: bank.phone ? null : 'This bank offers support primarily through in-app chat or web messaging.',
+  };
+});
 
 // Sort banks alphabetically
 const sortedBanks = [...banks].sort((a, b) => a.name.localeCompare(b.name));

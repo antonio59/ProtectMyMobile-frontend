@@ -84,7 +84,7 @@ const categoryBorderColors: Record<string, string> = {
       <!-- What's New Section - Featured -->
       <section class="mb-12">
         <div class="flex items-center justify-between mb-6">
-          <h2 class="flex items-center text-3xl font-bold text-neutral-900">What's New</h2>
+          <h2 class="flex items-center text-3xl font-bold text-neutral-900">Latest Mobile Security News & Updates</h2>
           <a href="/news" class="text-primary hover:underline font-medium flex items-center">
             View All News <ArrowRight class="h-4 w-4 ml-1" />
           </a>
@@ -94,9 +94,9 @@ const categoryBorderColors: Record<string, string> = {
           <!-- Latest News Posts -->
           {latestNews.length > 0 ? (
             latestNews.map((post: any) => (
-              <a href={`/news/${post.slug}`} class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden group border-l-4 border-blue-500">
+              <a href={`/news/${post.slug}`} class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden group border-l-4 border-blue-500 flex flex-col h-full">
                 
-                <div class="p-6">
+                <div class="p-6 flex flex-col h-full">
                   <div class="flex items-center gap-2 mb-3">
                     <Newspaper class="h-4 w-4 text-blue-600 flex-shrink-0" />
                     <span class="text-xs text-neutral-500 uppercase font-medium">{post.category.replace('_', ' ')}</span>
@@ -106,9 +106,12 @@ const categoryBorderColors: Record<string, string> = {
                   <h3 class="text-lg font-semibold mb-2 group-hover:text-primary transition-colors line-clamp-2">
                     {post.title}
                   </h3>
-                  <p class="text-neutral-600 text-sm line-clamp-3 leading-relaxed">
+                  <p class="text-neutral-600 text-sm line-clamp-3 leading-relaxed mb-4 flex-grow">
                     {post.excerpt}
                   </p>
+                  <div class="flex items-center text-primary font-medium text-sm mt-auto">
+                    Read full article <ArrowRight class="h-3 w-3 ml-1 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </div>
               </a>
             ))

@@ -5,6 +5,7 @@ import Footer from '../components/Footer.astro';
 import CommunityStatsDisplay from '../components/CommunityStats';
 import CommunityVoting from '../components/CommunityVoting';
 import { getCommunityStats } from '../lib/communityData';
+import { MessageSquare, Shield, TrendingUp } from 'lucide-react';
 
 // Fetch initial stats server-side
 const initialStats = await getCommunityStats();
@@ -20,46 +21,94 @@ const initialStats = await getCommunityStats();
     <div class="container mx-auto px-4 py-8">
       <div class="max-w-7xl mx-auto">
         
+        <!-- Hero Section -->
+        <div class="text-center mb-12">
+          <h1 class="flex items-center justify-center text-3xl md:text-4xl font-bold mb-4">
+            <TrendingUp class="h-10 w-10 mr-3 text-primary" />
+            Community Theft Insights
+          </h1>
+          <p class="text-xl text-neutral-600 max-w-2xl mx-auto">
+            Real-time data from the UK community. Share your story anonymously to help others understand the risks and protect themselves.
+          </p>
+        </div>
+
         <!-- Stats Section -->
         <section class="mb-12">
           <CommunityStatsDisplay initialStats={initialStats} client:load />
         </section>
         
-        <!-- Voting Section -->
-        <section class="mb-12">
-          <div class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-6">
-            <h2 class="text-2xl font-bold text-neutral-900 mb-3">
-              Share Your Experience
-            </h2>
-            <p class="text-neutral-700 mb-6">
-              Help others by anonymously sharing your experience. Answer 6 quick questions to contribute to our community insights. 
-              <span class="font-semibold text-primary">No personal information required.</span>
-            </p>
-            
-            <CommunityVoting initialStats={initialStats} client:load />
-          </div>
-        </section>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Voting Section (Main) -->
+          <section class="lg:col-span-2">
+            <div class="bg-white rounded-xl shadow-md p-6 md:p-8 mb-6 border-t-4 border-primary">
+              <div class="flex items-center gap-3 mb-4">
+                <MessageSquare class="h-6 w-6 text-primary" />
+                <h2 class="text-2xl font-bold text-neutral-900">
+                  Share Your Experience
+                </h2>
+              </div>
+              <p class="text-neutral-700 mb-6">
+                Help others by anonymously sharing your experience. Answer 6 quick questions to contribute to our community insights. 
+                <span class="font-semibold text-primary">No personal information required.</span>
+              </p>
+              
+              <CommunityVoting initialStats={initialStats} client:load />
+            </div>
+          </section>
 
-        <!-- About This Data -->
-        <section class="bg-neutral-50 rounded-lg p-6 border border-neutral-200">
-          <h3 class="text-lg font-semibold text-neutral-900 mb-4">
-            About This Data
-          </h3>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-neutral-700">
-            <div>
-              <h4 class="font-semibold text-neutral-900 mb-2">🔒 Privacy First</h4>
-              <p>All responses are completely anonymous. We don't collect names, emails, or any personally identifiable information.</p>
+          <!-- Sidebar Info -->
+          <aside class="space-y-6">
+            <!-- Privacy Card -->
+            <div class="bg-blue-50 rounded-xl p-6 border border-blue-100 shadow-sm">
+              <h3 class="text-lg font-bold text-blue-900 mb-3 flex items-center">
+                <Shield class="h-5 w-5 mr-2" />
+                Privacy First
+              </h3>
+              <ul class="space-y-3 text-sm text-blue-800">
+                <li class="flex items-start">
+                  <span class="mr-2">•</span>
+                  No accounts or login required
+                </li>
+                <li class="flex items-start">
+                  <span class="mr-2">•</span>
+                  No names or emails collected
+                </li>
+                <li class="flex items-start">
+                  <span class="mr-2">•</span>
+                  IP addresses hashed for anonymity
+                </li>
+                <li class="flex items-start">
+                  <span class="mr-2">•</span>
+                  Data used solely for aggregation
+                </li>
+              </ul>
             </div>
-            <div>
-              <h4 class="font-semibold text-neutral-900 mb-2">📊 Real-Time Insights</h4>
-              <p>Statistics update automatically as new responses come in, giving you the latest community insights.</p>
+
+            <!-- Why it matters -->
+            <div class="bg-white rounded-xl p-6 border border-neutral-200 shadow-sm">
+              <h3 class="text-lg font-bold text-neutral-900 mb-3">
+                Why contribute?
+              </h3>
+              <p class="text-neutral-600 text-sm mb-4">
+                Police data is often delayed by months. Your reports provide real-time awareness of:
+              </p>
+              <ul class="space-y-2 text-sm text-neutral-700 font-medium">
+                <li class="flex items-center gap-2">
+                  <span class="w-2 h-2 bg-red-500 rounded-full"></span>
+                  New theft hotspots
+                </li>
+                <li class="flex items-center gap-2">
+                  <span class="w-2 h-2 bg-orange-500 rounded-full"></span>
+                  Emerging theft tactics
+                </li>
+                <li class="flex items-center gap-2">
+                  <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                  Effective security measures
+                </li>
+              </ul>
             </div>
-            <div>
-              <h4 class="font-semibold text-neutral-900 mb-2">🤝 Community Driven</h4>
-              <p>This data comes from real people in our community who want to help others understand and prevent phone theft.</p>
-            </div>
-          </div>
-        </section>
+          </aside>
+        </div>
 
       </div>
     </div>

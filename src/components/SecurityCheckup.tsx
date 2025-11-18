@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Check, X, Shield, AlertTriangle, CheckCircle2, XCircle } from 'lucide-react';
+import { Check, X, Shield, AlertTriangle, CheckCircle2, XCircle, Share2 } from 'lucide-react';
 
 interface Question {
   id: string;
@@ -10,10 +10,10 @@ interface Question {
 
 const questions: Question[] = [
   // Device Security
-  { id: 'q1', question: 'Do you have a screen lock enabled (PIN, password, pattern, or biometric)?', category: 'device', points: 15 },
+  { id: 'q1', question: 'Do you have a screen lock enabled (PIN, password, pattern, or biometric)?', category: 'device', points: 10 },
   { id: 'q2', question: 'Is your screen lock set to auto-lock within 30 seconds of inactivity?', category: 'device', points: 10 },
   { id: 'q3', question: 'Do you use biometric authentication (fingerprint or face recognition)?', category: 'device', points: 10 },
-  { id: 'q4', question: 'Have you enabled Find My Device/iPhone on your phone?', category: 'device', points: 15 },
+  { id: 'q4', question: 'Have you enabled Find My Device/iPhone on your phone?', category: 'device', points: 10 },
   
   // SIM & Network
   { id: 'q5', question: 'Have you set up a SIM PIN lock?', category: 'sim', points: 10 },
@@ -70,7 +70,7 @@ export default function SecurityCheckup() {
       if (answers[q.id] === false) {
         switch (q.id) {
           case 'q1':
-            recs.push({ title: 'Enable Screen Lock', description: 'Set up a PIN, password, or biometric lock immediately. This is your first line of defense.', priority: 'high' });
+            recs.push({ title: 'Enable Screen Lock', description: 'Set up a PIN, password, or biometric lock immediately. This is your first line of defence.', priority: 'high' });
             break;
           case 'q4':
             recs.push({ title: 'Enable Find My Device', description: 'Turn on Find My iPhone (iOS) or Find My Device (Android) to track and remotely lock your phone.', priority: 'high' });
@@ -111,6 +111,25 @@ export default function SecurityCheckup() {
     const score = calculateScore();
     const scoreLevel = getScoreLevel(score.percentage);
     const recommendations = getRecommendations();
+
+    const handleShare = async () => {
+      const shareData = {
+        title: 'Mobile Security Score',
+        text: `I just checked my phone's security score on ProtectMyMobile! I scored ${score.percentage}%. Check yours here:`,
+        url: window.location.href,
+      };
+      
+      if (navigator.share) {
+        try {
+          await navigator.share(shareData);
+        } catch (err) {
+          console.error('Share failed:', err);
+        }
+      } else {
+        navigator.clipboard.writeText(`${shareData.text}\n${shareData.url}`);
+        alert('Link copied to clipboard!');
+      }
+    };
 
     return (
       <div className="space-y-6">
@@ -209,7 +228,14 @@ export default function SecurityCheckup() {
           </div>
         </div>
 
-        <div className="text-center">
+        <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <button
+            onClick={handleShare}
+            className="flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+          >
+            <Share2 className="mr-2 h-5 w-5" />
+            Share Result
+          </button>
           <button
             onClick={handleReset}
             className="px-6 py-3 bg-neutral-200 text-neutral-800 rounded-lg font-medium hover:bg-neutral-300 transition-colors"

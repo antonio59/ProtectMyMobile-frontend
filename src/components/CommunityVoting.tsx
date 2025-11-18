@@ -12,6 +12,8 @@ import {
 } from '../lib/communityData';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 
+import { triggerStatsRefresh } from '../lib/stores/communityStore';
+
 interface Props {
   initialStats: CommunityStats | null;
 }
@@ -107,6 +109,8 @@ export default function CommunityVoting({ initialStats }: Props) {
         const statsRes = await fetch('/api/community/stats');
         const newStats = await statsRes.json();
         setStats(newStats);
+        // Trigger update in other components
+        triggerStatsRefresh();
       } else {
         setError(result.error || 'Failed to submit response');
       }

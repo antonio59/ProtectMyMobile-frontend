@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Play, Pause, SkipBack, SkipForward, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import 'leaflet/dist/leaflet.css';
 
 // Dynamic import for Leaflet
 let L: any;
@@ -116,6 +117,7 @@ export default function TimelapseMapRedesigned() {
   const [mounted, setMounted] = useState(false);
   const [mapError, setMapError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [geoJsonData, setGeoJsonData] = useState<any>(null);
 
   const uniqueMonths = Array.from(new Set(boroughData.map(d => d.date))).sort();
   const currentMonth = uniqueMonths[currentMonthIndex];
@@ -155,6 +157,17 @@ export default function TimelapseMapRedesigned() {
 
   useEffect(() => {
     setMounted(true);
+    // Fetch borough boundaries once
+    fetch('/london-boroughs-simple.json')
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch');
+        return res.json();
+      })
+      .then(data => setGeoJsonData(data))
+      .catch(err => {
+        console.error('Failed to load borough boundaries', err);
+        setMapError('Failed to load map data');
+      });
   }, []);
 
   // Initialize map
@@ -209,92 +222,84 @@ export default function TimelapseMapRedesigned() {
 
   // Update choropleth when month changes
   useEffect(() => {
-    if (!mapRef.current || !L || !mounted) return;
+    if (!mapRef.current || !L || !mounted || !geoJsonData) return;
 
-    const updateChoropleth = async () => {
+    const updateChoropleth = () => {
       try {
         // Remove existing layer
         if (geoJsonLayerRef.current) {
           mapRef.current?.removeLayer(geoJsonLayerRef.current);
         }
 
-        // Fetch borough boundaries
-        const response = await fetch('/london-boroughs-simple.json');
-        if (!response.ok) {
-          console.error('Failed to load borough boundaries');
-          return;
-        }
-        const geoJsonData = await response.json();
-
-      // Get color based on theft count
-      const getColor = (thefts: number) => {
-        return thefts > 1500 ? '#b91c1c' :
-               thefts > 1000 ? '#dc2626' :
-               thefts > 600 ? '#ef4444' :
-               thefts > 400 ? '#f87171' :
-               thefts > 200 ? '#fca5a5' :
-                              '#fecaca';
-      };
-
-      // Style function
-      const style = (feature: any) => {
-        const boroughName = feature.properties.name;
-        const boroughInfo = currentData.find(d => d.borough === boroughName);
-        const thefts = boroughInfo?.thefts || 0;
-
-        return {
-          fillColor: getColor(thefts),
-          weight: selectedBorough === boroughName ? 3 : 1.5,
-          opacity: 1,
-          color: selectedBorough === boroughName ? '#fbbf24' : '#ffffff',
-          fillOpacity: 0.7
+        // Get color based on theft count
+        const getColor = (thefts: number) => {
+          return thefts > 1500 ? '#b91c1c' :
+                 thefts > 1000 ? '#dc2626' :
+                 thefts > 600 ? '#ef4444' :
+                 thefts > 400 ? '#f87171' :
+                 thefts > 200 ? '#fca5a5' :
+                                '#fecaca';
         };
-      };
 
-      // Create new layer
-      const geoJsonLayer = L.geoJSON(geoJsonData, {
-        style: style,
-        onEachFeature: (feature: any, layer: any) => {
+        // Style function
+        const style = (feature: any) => {
           const boroughName = feature.properties.name;
           const boroughInfo = currentData.find(d => d.borough === boroughName);
           const thefts = boroughInfo?.thefts || 0;
 
-          // Popup content
-          layer.bindPopup(`
-            <div style="color: #1f2937;">
-              <strong style="font-size: 16px;">${boroughName}</strong><br/>
-              <span style="font-size: 14px; color: #dc2626; font-weight: bold;">${thefts.toLocaleString()}</span> thefts in ${currentMonthDisplay}
-            </div>
-          `);
+          return {
+            fillColor: getColor(thefts),
+            weight: selectedBorough === boroughName ? 3 : 1.5,
+            opacity: 1,
+            color: selectedBorough === boroughName ? '#fbbf24' : '#ffffff',
+            fillOpacity: 0.7
+          };
+        };
 
-          // Hover effects
-          layer.on({
-            mouseover: (e: any) => {
-              layer.setStyle({
-                weight: 3,
-                color: '#fbbf24',
-                fillOpacity: 0.9
-              });
-              layer.openPopup();
-            },
-            mouseout: (e: any) => {
-              geoJsonLayer.resetStyle(layer);
-            },
-            click: (e: any) => {
-              setSelectedBorough(boroughName);
-            }
-          });
-        }
-      }).addTo(mapRef.current);
+        // Create new layer
+        const geoJsonLayer = L.geoJSON(geoJsonData, {
+          style: style,
+          onEachFeature: (feature: any, layer: any) => {
+            const boroughName = feature.properties.name;
+            const boroughInfo = currentData.find(d => d.borough === boroughName);
+            const thefts = boroughInfo?.thefts || 0;
 
-      geoJsonLayerRef.current = geoJsonLayer;
+            // Popup content
+            layer.bindPopup(`
+              <div style="color: #1f2937;">
+                <strong style="font-size: 16px;">${boroughName}</strong><br/>
+                <span style="font-size: 14px; color: #dc2626; font-weight: bold;">${thefts.toLocaleString()}</span> thefts in ${currentMonthDisplay}
+              </div>
+            `);
+
+            // Hover effects
+            layer.on({
+              mouseover: (e: any) => {
+                layer.setStyle({
+                  weight: 3,
+                  color: '#fbbf24',
+                  fillOpacity: 0.9
+                });
+                layer.openPopup();
+              },
+              mouseout: (e: any) => {
+                geoJsonLayer.resetStyle(layer);
+              },
+              click: (e: any) => {
+                setSelectedBorough(boroughName);
+              }
+            });
+          }
+        }).addTo(mapRef.current);
+
+        geoJsonLayerRef.current = geoJsonLayer;
       } catch (error) {
         console.error('Error updating choropleth:', error);
       }
     };
 
     updateChoropleth();
-  }, [currentMonth, currentData, selectedBorough, currentMonthDisplay, mounted]);
+  }, [currentMonth, currentData, selectedBorough, currentMonthDisplay, mounted, geoJsonData]);
 
   // Auto-play timelapse
   useEffect(() => {

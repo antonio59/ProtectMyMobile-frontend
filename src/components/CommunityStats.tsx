@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import type { CommunityStats } from '../lib/communityData';
 import { getMostCommonLocation, getSecurityAdoptionRate } from '../lib/communityData';
 import { TrendingDown, MapPin, Shield, AlertTriangle } from 'lucide-react';
+import { useStore } from '@nanostores/react';
+import { statsRefreshTrigger } from '../lib/stores/communityStore';
 
 interface Props {
   initialStats: CommunityStats | null;
@@ -13,21 +15,24 @@ interface Props {
 export default function CommunityStatsDisplay({ initialStats }: Props) {
   const [stats, setStats] = useState<CommunityStats | null>(initialStats);
   const [loading, setLoading] = useState(!initialStats);
+  const refreshCount = useStore(statsRefreshTrigger);
 
   useEffect(() => {
-    if (!initialStats) {
-      fetch('/api/community/stats')
-        .then(res => res.json())
-        .then(data => {
-          setStats(data);
-          setLoading(false);
-        })
-        .catch(err => {
-          console.error('Error fetching stats:', err);
-          setLoading(false);
-        });
-    }
-  }, [initialStats]);
+    // Skip first fetch if we have initialStats and it's the first render (refreshCount === 0)
+    if (initialStats && refreshCount === 0) return;
+
+    setLoading(true);
+    fetch('/api/community/stats')
+      .then(res => res.json())
+      .then(data => {
+        setStats(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Error fetching stats:', err);
+        setLoading(false);
+      });
+  }, [refreshCount]); // Re-run when refreshCount changes
 
   if (loading) {
     return (

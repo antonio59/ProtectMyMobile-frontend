@@ -1,0 +1,162 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { Shield, ExternalLink, Copy, MessageSquare, AlertTriangle, RefreshCw } from 'lucide-react';
+---
+
+<Layout 
+  title="Social Monitor | ProtectMyMobile Admin"
+  description="Monitor social media for lost phone reports."
+>
+  <Header />
+  
+  <main class="bg-[#f3f2f1] min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h1 class="text-3xl font-bold flex items-center gap-3">
+            <MessageSquare class="h-8 w-8 text-primary" />
+            Reddit Monitor
+          </h1>
+          <p class="text-neutral-600 mt-2">Scan Reddit for recent "lost phone" or "stolen phone" posts in London/UK.</p>
+        </div>
+        <button id="refresh-btn" class="flex items-center gap-2 px-4 py-2 bg-white border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors">
+          <RefreshCw class="h-4 w-4" />
+          Refresh Feed
+        </button>
+      </div>
+
+      <!-- Reply Template Section -->
+      <div class="bg-white rounded-xl shadow-md p-6 mb-8 border-l-4 border-primary">
+        <h2 class="text-lg font-bold mb-3 flex items-center gap-2">
+          <Copy class="h-5 w-5 text-primary" />
+          Quick Reply Template
+        </h2>
+        <div class="bg-neutral-50 p-4 rounded-lg font-mono text-sm text-neutral-700 mb-3 whitespace-pre-wrap" id="reply-template">Sorry to hear this happened! 😞
+
+If you haven't already, check out the [Emergency Steps Guide](https://protectmymobile.xyz/emergency) on ProtectMyMobile. It covers:
+1. Locking your device (IMEI blacklisting)
+2. Securing banking apps immediately
+3. Reporting to police for a crime reference number
+4. Tracking/Data removal tips
+
+Hope you can get it sorted quickly! Stay safe.</div>
+        <button 
+          onclick="navigator.clipboard.writeText(document.getElementById('reply-template').innerText); alert('Copied to clipboard!');"
+          class="text-sm font-medium text-primary hover:underline flex items-center gap-1"
+        >
+          Click to Copy Template
+        </button>
+      </div>
+
+      <!-- Results Grid -->
+      <div id="results-container" class="grid grid-cols-1 gap-4">
+        <div class="text-center py-12 text-neutral-500">
+          Loading posts...
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <Footer />
+</Layout>
+
+<script>
+  async function fetchRedditPosts() {
+    const container = document.getElementById('results-container');
+    const btn = document.getElementById('refresh-btn');
+    const icon = btn?.querySelector('svg');
+    
+    if (!container) return;
+    
+    // UI Loading State
+    container.innerHTML = '<div class="text-center py-12 text-neutral-500">Scanning Reddit...</div>';
+    if (icon) icon.classList.add('animate-spin');
+    
+    try {
+      // Search multiple relevant subreddits
+      const subreddits = ['london', 'AskUK', 'UnitedKingdom', 'Android', 'iphone'];
+      const query = 'phone stolen OR mobile theft OR lost phone';
+      const url = `https://www.reddit.com/r/${subreddits.join('+')}/search.json?q=${encodeURIComponent(query)}&sort=new&restrict_sr=1&limit=15`;
+      
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      if (!data.data || !data.data.children) {
+        throw new Error('Invalid response from Reddit');
+      }
+
+      const posts = data.data.children;
+      
+      if (posts.length === 0) {
+        container.innerHTML = '<div class="text-center py-12 text-neutral-500">No recent posts found matching criteria.</div>';
+        return;
+      }
+
+      container.innerHTML = posts.map((item: any) => {
+        const post = item.data;
+        const date = new Date(post.created_utc * 1000).toLocaleDateString('en-GB', {
+          day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+        });
+        
+        // Highlight keywords
+        const title = post.title.replace(/(stolen|theft|robbed|mugged|lost)/gi, '<span class="bg-red-100 text-red-800 px-1 rounded">$1</span>');
+
+        return `
+          <div class="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow border border-neutral-200">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-xs font-bold bg-neutral-100 text-neutral-600 px-2 py-1 rounded-full">
+                r/${post.subreddit}
+              </span>
+              <span class="text-xs text-neutral-500">${date}</span>
+            </div>
+            
+            <h3 class="text-lg font-bold text-neutral-900 mb-2">
+              <a href="https://reddit.com${post.permalink}" target="_blank" class="hover:text-primary hover:underline flex items-start gap-2">
+                ${title}
+                <ExternalLink class="h-4 w-4 flex-shrink-0 mt-1 text-neutral-400" />
+              </a>
+            </h3>
+            
+            <p class="text-neutral-600 text-sm mb-4 line-clamp-3">
+              ${post.selftext || '(No text content)'}
+            </p>
+            
+            <div class="flex items-center justify-between pt-4 border-t border-neutral-100">
+              <div class="text-xs text-neutral-500">
+                By u/${post.author} • ${post.num_comments} comments
+              </div>
+              <a 
+                href="https://reddit.com${post.permalink}" 
+                target="_blank"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors"
+              >
+                <MessageSquare class="h-4 w-4" />
+                Reply on Reddit
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+    } catch (error) {
+      console.error('Reddit fetch error:', error);
+      container.innerHTML = `
+        <div class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+          <AlertTriangle class="h-8 w-8 text-red-600 mx-auto mb-2" />
+          <p class="text-red-800 font-medium">Failed to load Reddit posts</p>
+          <p class="text-red-600 text-sm">This might be due to ad blockers or rate limiting.</p>
+        </div>
+      `;
+    } finally {
+      if (icon) icon.classList.remove('animate-spin');
+    }
+  }
+
+  // Initial load
+  document.addEventListener('DOMContentLoaded', fetchRedditPosts);
+  
+  // Refresh button
+  document.getElementById('refresh-btn')?.addEventListener('click', fetchRedditPosts);
+</script>
