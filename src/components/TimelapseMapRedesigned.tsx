@@ -114,6 +114,8 @@ export default function TimelapseMapRedesigned() {
   const [playbackSpeed, setPlaybackSpeed] = useState(1000);
   const [selectedBorough, setSelectedBorough] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [mapError, setMapError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const uniqueMonths = Array.from(new Set(boroughData.map(d => d.date))).sort();
   const currentMonth = uniqueMonths[currentMonthIndex];
@@ -160,27 +162,34 @@ export default function TimelapseMapRedesigned() {
     if (typeof window === 'undefined' || !mounted) return;
 
     const initMap = async () => {
-      if (!L) {
-        L = (await import('leaflet')).default;
-      }
+      try {
+        if (!L) {
+          L = (await import('leaflet')).default;
+        }
 
-      if (!mapRef.current) {
-        const map = L.map('timelapse-map-redesigned', {
-          center: [51.5074, -0.1278],
-          zoom: 10,
-          minZoom: 10, // Prevent zooming out too far
-          maxZoom: 12, // Prevent zooming in to residential level
-          zoomControl: true,
-          scrollWheelZoom: true,
-        });
+        if (!mapRef.current) {
+          const map = L.map('timelapse-map-redesigned', {
+            center: [51.5074, -0.1278],
+            zoom: 10,
+            minZoom: 10, // Prevent zooming out too far
+            maxZoom: 12, // Prevent zooming in to residential level
+            zoomControl: true,
+            scrollWheelZoom: true,
+          });
 
-        // Dark tile layer
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-          attribution: '© OpenStreetMap contributors © CARTO',
-          maxZoom: 12 // Hard limit on zoom
-        }).addTo(map);
+          // Dark tile layer
+          L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '© OpenStreetMap contributors © CARTO',
+            maxZoom: 12 // Hard limit on zoom
+          }).addTo(map);
 
-        mapRef.current = map;
+          mapRef.current = map;
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error('Error initializing map:', error);
+        setMapError('Failed to load map. Please refresh the page.');
+        setIsLoading(false);
       }
     };
 
@@ -188,7 +197,11 @@ export default function TimelapseMapRedesigned() {
 
     return () => {
       if (mapRef.current) {
-        mapRef.current.remove();
+        try {
+          mapRef.current.remove();
+        } catch (e) {
+          console.error('Error removing map:', e);
+        }
         mapRef.current = null;
       }
     };
@@ -199,14 +212,19 @@ export default function TimelapseMapRedesigned() {
     if (!mapRef.current || !L || !mounted) return;
 
     const updateChoropleth = async () => {
-      // Remove existing layer
-      if (geoJsonLayerRef.current) {
-        mapRef.current?.removeLayer(geoJsonLayerRef.current);
-      }
+      try {
+        // Remove existing layer
+        if (geoJsonLayerRef.current) {
+          mapRef.current?.removeLayer(geoJsonLayerRef.current);
+        }
 
-      // Fetch borough boundaries
-      const response = await fetch('/london-boroughs-simple.json');
-      const geoJsonData = await response.json();
+        // Fetch borough boundaries
+        const response = await fetch('/london-boroughs-simple.json');
+        if (!response.ok) {
+          console.error('Failed to load borough boundaries');
+          return;
+        }
+        const geoJsonData = await response.json();
 
       // Get color based on theft count
       const getColor = (thefts: number) => {
@@ -270,6 +288,9 @@ export default function TimelapseMapRedesigned() {
       }).addTo(mapRef.current);
 
       geoJsonLayerRef.current = geoJsonLayer;
+      } catch (error) {
+        console.error('Error updating choropleth:', error);
+      }
     };
 
     updateChoropleth();
@@ -340,6 +361,23 @@ export default function TimelapseMapRedesigned() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isPlaying, uniqueMonths.length]);
 
+  // Show error if map failed to load
+  if (mapError) {
+    return (
+      <div className="bg-red-50 border-2 border-red-200 rounded-lg p-8 text-center">
+        <div className="text-red-600 text-4xl mb-4">⚠️</div>
+        <h3 className="text-xl font-bold text-red-900 mb-2">Map Loading Error</h3>
+        <p className="text-red-700 mb-4">{mapError}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+        >
+          Refresh Page
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Header with current period */}
@@ -379,12 +417,22 @@ export default function TimelapseMapRedesigned() {
             <h3 className="text-lg font-semibold mb-3 text-neutral-900">
               London Borough Theft Density
             </h3>
-            <div 
-              id="timelapse-map-redesigned" 
-              className="w-full h-[400px] md:h-[500px] lg:h-[600px] rounded-lg shadow-inner border-2 border-neutral-200 bg-neutral-900"
-              role="application"
-              aria-label="Interactive borough-level theft density map"
-            />
+            <div className="relative">
+              <div 
+                id="timelapse-map-redesigned" 
+                className="w-full h-[400px] md:h-[500px] lg:h-[600px] rounded-lg shadow-inner border-2 border-neutral-200 bg-neutral-900"
+                role="application"
+                aria-label="Interactive borough-level theft density map"
+              />
+              {isLoading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-neutral-900 bg-opacity-75 rounded-lg">
+                  <div className="text-white text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+                    <p>Loading map...</p>
+                  </div>
+                </div>
+              )}
+            </div>
             <div className="mt-4 flex items-center justify-between text-xs text-neutral-600">
               <div className="flex items-center gap-2">
                 <span className="font-semibold">Legend:</span>
