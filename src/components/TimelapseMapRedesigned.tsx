@@ -23,7 +23,9 @@ interface BoroughStats {
 }
 
 // Aggregated borough-level data (NO individual addresses)
+// Note: In production, this data is fetched from Supabase 'theft_data_points' table
 const boroughData: BoroughData[] = [
+  // ... static data as fallback ...
   // January 2024
   { date: '2024-01', borough: 'Westminster', thefts: 1250 },
   { date: '2024-01', borough: 'Camden', thefts: 520 },
