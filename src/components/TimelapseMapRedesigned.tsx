@@ -111,7 +111,7 @@ const peakHoursData = [
 
 export default function TimelapseMapRedesigned() {
   const mapRef = useRef<L.Map | null>(null);
-  const geoJsonLayerRef = useRef<L.GeoJSON | null>(null);
+  const dataLayerGroupRef = useRef<L.LayerGroup | null>(null);
   const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1000);
@@ -230,6 +230,10 @@ export default function TimelapseMapRedesigned() {
             maxZoom: 12
           }).addTo(map);
 
+          // Initialize data layer group
+          const dataLayerGroup = L.layerGroup().addTo(map);
+          dataLayerGroupRef.current = dataLayerGroup;
+
           mapRef.current = map;
           setIsLoading(false);
         }
@@ -267,14 +271,10 @@ export default function TimelapseMapRedesigned() {
 
   // Update Map Layers
   useEffect(() => {
-    if (!mapRef.current || !L || !mounted) return;
+    if (!mapRef.current || !L || !mounted || !dataLayerGroupRef.current) return;
 
     // Clear existing layers
-    mapRef.current.eachLayer((layer: any) => {
-      if (layer instanceof L.GeoJSON || layer instanceof L.CircleMarker) {
-        mapRef.current?.removeLayer(layer);
-      }
-    });
+    dataLayerGroupRef.current.clearLayers();
 
     if (viewMode === 'london' && geoJsonData) {
       // Render London Choropleth
@@ -328,7 +328,7 @@ export default function TimelapseMapRedesigned() {
             click: () => setSelectedBorough(boroughName)
           });
         }
-      }).addTo(mapRef.current);
+      }).addTo(dataLayerGroupRef.current);
     } else {
       // Render UK City Markers
       ukCityData.forEach(city => {
@@ -342,7 +342,7 @@ export default function TimelapseMapRedesigned() {
           weight: 1,
           opacity: 1,
           fillOpacity: 0.8
-        }).addTo(mapRef.current!)
+        }).addTo(dataLayerGroupRef.current!)
           .bindPopup(`
             <div style="color: #1f2937;">
               <strong style="font-size: 16px;">${city.name}</strong><br/>
