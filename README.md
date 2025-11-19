@@ -15,6 +15,7 @@
 - **Charts:** [Recharts](https://recharts.org)
 - **Hosting:** [Netlify](https://netlify.com)
 - **Icons:** [Lucide React](https://lucide.dev)
+- **Analytics:** [Umami](https://umami.is) (Self-hosted)
 
 ## ✨ Key Features
 
