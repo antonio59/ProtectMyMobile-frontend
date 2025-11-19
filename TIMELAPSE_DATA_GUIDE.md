@@ -1,51 +1,75 @@
-# Timelapse Data Management Guide
+# Timelapse Data Guide (Updated 2024)
 
-This guide explains how to maintain and update the UK Theft Hotspots Timelapse data.
+> **Note:** This guide reflects the updated UK-wide data strategy implemented in November 2024.
 
-## Data Structure
+## 📊 Data Sources
 
-Data is stored in the Supabase `theft_data_points` table:
+### 1. UK National Statistics
+- **Source:** Office for National Statistics (ONS) Crime Survey 2024.
+- **Key Metric:** "Theft from the person" (Snatch thefts).
+- **Usage:** Used for the UK-wide view in `UKStatistics.tsx` and the national map markers.
 
-- **date**: `YYYY-MM-01` (e.g., 2024-01-01)
-- **location_name**: City name (e.g., "Manchester") or Borough name (e.g., "Westminster")
-- **latitude**: Decimal coordinates
-- **longitude**: Decimal coordinates
-- **theft_count**: Total reported thefts for that month
-- **data_source**: Identifier (e.g., "police_uk_api", "met_police", "simulated")
+### 2. London Borough Data
+- **Source:** Metropolitan Police Service Year-End Report 2024.
+- **Key Metrics:**
+  - Total Thefts: **117,211**
+  - Top Borough: **Westminster** (34,039)
+- **Usage:** Used for the London drill-down choropleth map in `TimelapseMapFinal.tsx`.
 
-## Updating Data
+### 3. Regional Estimates
+- **Locations:** Manchester, Birmingham, Leeds, etc.
+- **Source:** Local police force reports (GMP, West Midlands Police) and BBC News analysis.
+- **Usage:** Used to populate major city markers on the UK map.
 
-### 1. Automated Seeding (Simulated)
-We have an admin API endpoint to seed simulated data for testing or filling gaps.
-- Endpoint: `/api/admin/seed-stats`
-- Method: `GET`
-- Requirement: `SUPABASE_SERVICE_ROLE_KEY` environment variable must be set.
+---
 
-### 2. Future: Real Data Ingestion
-To import real police data (Police.uk API), follow these steps:
+## 🗺️ Map Data Structure
 
-1. **Fetch Data**: Use the Police UK API to get crime data for specific lat/lng.
-   - Category: `theft-from-the-person`
-2. **Aggregate**: Group incidents by City/Borough and Month.
-3. **Upload**: Insert into `theft_data_points` via a script or Supabase dashboard.
+### GeoJSON (Borough Boundaries)
+- **File:** `public/london-boroughs-simple.json`
+- **Format:** Simplified GeoJSON polygons for London boroughs.
+- **Optimized:** Vertex count reduced for faster rendering.
 
-Example SQL for insertion:
-```sql
-INSERT INTO theft_data_points (date, location_name, latitude, longitude, theft_count, data_source)
-VALUES ('2025-01-01', 'Bristol', 51.4545, -2.5879, 420, 'police_uk_api');
+### Component Data (`src/components/TimelapseMapFinal.tsx`)
+
+**UK City Data Array:**
+```typescript
+interface RegionData {
+  name: string;       // e.g., "London", "Manchester"
+  lat: number;        // Latitude
+  lng: number;        // Longitude
+  annualThefts: number; // Total annual count
+  riskLevel: 'High' | 'Medium' | 'Low';
+}
 ```
 
-## Component Configuration
+**London Borough Data Array:**
+```typescript
+{ 
+  name: 'Westminster', 
+  annualThefts: 34039, 
+  trend: +48 // Percent increase
+}
+```
 
-The `TimelapseMapRedesigned` component automatically handles:
-- **Year Switching**: Filters data by the selected year.
-- **View Modes**: Toggles between "UK National" (Cities) and "London" (Boroughs).
-- **Data Fetching**: Currently uses a mix of mock data arrays. To switch to full DB fetching:
-  1. Uncomment the Supabase fetch logic in `useEffect`.
-  2. Replace the `ukCityData` and `boroughData` arrays with the fetched state.
+---
 
-## Year-on-Year Analysis
+## 🔄 How to Update Data
 
-To enable Year-on-Year comparison:
-1. Ensure data exists for previous years (e.g., 2023).
-2. The component calculates `% change` automatically if `previousTotal > 0`.
+1. **Annual Updates:**
+   - Update the `annualThefts` values in `src/components/TimelapseMapFinal.tsx`.
+   - Update the statistics in `src/components/UKStatistics.tsx`.
+
+2. **Adding New Regions:**
+   - Add a new object to the `ukCityData` array with coordinates and risk level.
+
+3. **Refining Boundaries:**
+   - Replace `public/london-boroughs-simple.json` with a new GeoJSON file if boundaries change (unlikely).
+
+---
+
+## 🔒 Privacy & Security
+
+- **Aggregation:** All data is aggregated at the Borough or City level.
+- **No PII:** No individual addresses or specific incident coordinates are stored or displayed.
+- **Zoom Limits:** Map prevents zooming in to street level to protect privacy.

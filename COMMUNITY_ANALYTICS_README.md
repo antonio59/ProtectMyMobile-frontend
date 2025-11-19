@@ -1,3 +1,7 @@
+# [REFERENCE] Community Analytics Guide
+
+> **Note:** This guide is a reference for the Community Analytics feature. See `README.md` for main project documentation.
+
 # Community Analytics - Setup & Implementation Guide
 
 ## ✅ What's Been Built

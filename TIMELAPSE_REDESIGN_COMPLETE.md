@@ -1,4 +1,6 @@
-# Timelapse Redesign - COMPLETE ✅
+# [ARCHIVED] Timelapse Redesign - COMPLETE ✅
+
+> **Note:** This document is archived. The redesign was completed in November 2024. See `README.md` for current project state.
 
 ## 🔒 CRITICAL SECURITY FIX
 

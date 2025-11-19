@@ -1,3 +1,7 @@
+# [ARCHIVED] Timelapse Page - UI/UX Review & Improvements
+
+> **Note:** This document is archived. The review was completed in November 2024. See `README.md` for current project state.
+
 # Timelapse Page - UI/UX Review & Improvements
 
 ## 🔍 Current State Analysis

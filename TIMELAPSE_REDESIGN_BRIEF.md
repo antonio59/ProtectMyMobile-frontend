@@ -1,3 +1,7 @@
+# [ARCHIVED] Timelapse Page Redesign Brief
+
+> **Note:** This document is archived. The redesign was completed in November 2024. See `README.md` for current project state.
+
 # Timelapse Page Redesign Brief
 
 ## Current Problems Identified

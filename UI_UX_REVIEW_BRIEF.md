@@ -1,3 +1,7 @@
+# [ARCHIVED] UI/UX Design Review - ProtectMyMobile
+
+> **Note:** This document is archived. The review was completed in November 2024. See `README.md` for current project state.
+
 # UI/UX Design Review - ProtectMyMobile
 
 ## Project Overview

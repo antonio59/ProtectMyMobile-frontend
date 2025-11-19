@@ -1,3 +1,7 @@
+# [REFERENCE] Community Experiences Design
+
+> **Note:** This design document is a reference for the Community Analytics feature implemented in November 2024.
+
 # Community Experiences - Analytics & Voting System Design
 
 ## 🎯 Concept Overview

@@ -1,3 +1,7 @@
+# [ARCHIVED] UI/UX Comprehensive Review - ProtectMyMobile
+
+> **Note:** This document is archived. The review was completed in November 2024. See `README.md` for current project state.
+
 # 🎨 UI/UX Comprehensive Review - ProtectMyMobile
 **Date:** November 16, 2025  
 **Reviewed By:** UI/UX Design Specialist  
