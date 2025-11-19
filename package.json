@@ -45,6 +45,6 @@
     "tailwindcss": "^3.4.17"
   },
   "optionalDependencies": {
-    "@rollup/rollup-darwin-arm64": "^4.53.2"
+    "@rollup/rollup-darwin-arm64": "^4.53.3"
   }
 }
