@@ -86,9 +86,9 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
-    "@astrojs/netlify": "^8.2.4",
-    "@astrojs/react": "^6.0.4",
-    "@astrojs/sitemap": "^3.7.3",
+    "@astrojs/netlify": "^8.2.5",
+    "@astrojs/react": "^6.0.5",
+    "@astrojs/sitemap": "^3.7.4",
     "@google/design.md": "^0.4.0",
     "@netlify/functions": "^5.3.0",
     "@tailwindcss/postcss": "^4.3.3",
@@ -97,7 +97,7 @@
     "postcss": "^8.5.15",
     "stylelint": "^16.0.0",
     "stylelint-config-standard": "^37.0.0",
-    "tsx": "^4.23.12",
+    "tsx": "^4.23.13",
     "typescript": "^5.9.3"
   },
   "trustedDependencies": [
