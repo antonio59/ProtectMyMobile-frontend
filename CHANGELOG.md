@@ -132,6 +132,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changes
 
+- Bump @types/react-dom in the react group across 1 directory (#110)
+- Bump nanostores from 1.5.2 to 1.5.3 (#114)
 - Bump resend from 6.24.0 to 6.26.0 (#113)
 - Bump astro from 7.2.9 to 7.3.1 in the astro group (#109)
 - Merge pull request #108 from antonio59/cursor/security-findings-9197
@@ -1506,6 +1508,7 @@ Co-authored-by: factory-droid[bot] <138933559+factory-droid[bot]@users.noreply.g
 
 ### Documentation
 
+- Update changelog [skip ci]
 - Update changelog [skip ci]
 - Update changelog [skip ci]
 - Update changelog [skip ci]
