@@ -132,6 +132,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changes
 
+- Bump astro from 7.2.9 to 7.3.1 in the astro group (#109)
 - Merge pull request #108 from antonio59/cursor/security-findings-9197
 
 Clear OSV and CodeQL security findings
@@ -1504,6 +1505,7 @@ Co-authored-by: factory-droid[bot] <138933559+factory-droid[bot]@users.noreply.g
 
 ### Documentation
 
+- Update changelog [skip ci]
 - Update changelog [skip ci]
 - Update changelog [skip ci]
 - Update changelog [skip ci]
