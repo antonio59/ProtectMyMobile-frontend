@@ -132,6 +132,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changes
 
+- Bump the dev-dependencies group across 1 directory with 5 updates (#115)
 - Bump @types/react-dom in the react group across 1 directory (#110)
 - Bump nanostores from 1.5.2 to 1.5.3 (#114)
 - Bump resend from 6.24.0 to 6.26.0 (#113)
@@ -1508,6 +1509,7 @@ Co-authored-by: factory-droid[bot] <138933559+factory-droid[bot]@users.noreply.g
 
 ### Documentation
 
+- Update changelog [skip ci]
 - Update changelog [skip ci]
 - Update changelog [skip ci]
 - Update changelog [skip ci]
