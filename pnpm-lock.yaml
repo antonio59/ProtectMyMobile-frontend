@@ -37,7 +37,7 @@ importers:
         version: 4.0.19
       '@nanostores/react':
         specifier: ^1.1.0
-        version: 1.1.0(nanostores@1.5.2)(react@19.2.8)
+        version: 1.1.0(nanostores@1.5.3)(react@19.2.8)
       '@resvg/resvg-js':
         specifier: 2.6.2
         version: 2.6.2
@@ -69,8 +69,8 @@ importers:
         specifier: ^17.0.6
         version: 17.0.6
       nanostores:
-        specifier: ^1.5.2
-        version: 1.5.2
+        specifier: ^1.5.3
+        version: 1.5.3
       node-html-parser:
         specifier: ^7.1.0
         version: 7.1.0
@@ -3585,8 +3585,8 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  nanostores@1.5.2:
-    resolution: {integrity: sha512-B0UbxzK1s0CN8Xht6r+7iT5+xV8PTaRERR1nATeplRv1Rw5YLWfVAid0hkqY3EceqpG4RjTk8GAwIxQY39Rnwg==}
+  nanostores@1.5.3:
+    resolution: {integrity: sha512-rQLB6eV4f2AW/n3L0JmwCROpaisYy9EDEADvEFSd1C/qG8hB6O5TPlh9A791JRbJr4CnMQBzptDcvD9OR1+6WA==}
     engines: {node: ^20.0.0 || >=22.0.0}
 
   neotraverse@1.0.1:
@@ -5696,9 +5696,9 @@ snapshots:
       - encoding
       - supports-color
 
-  '@nanostores/react@1.1.0(nanostores@1.5.2)(react@19.2.8)':
+  '@nanostores/react@1.1.0(nanostores@1.5.3)(react@19.2.8)':
     dependencies:
-      nanostores: 1.5.2
+      nanostores: 1.5.3
       react: 19.2.8
 
   '@napi-rs/wasm-runtime@1.2.3(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)':
@@ -8842,7 +8842,7 @@ snapshots:
 
   nanoid@3.3.18: {}
 
-  nanostores@1.5.2: {}
+  nanostores@1.5.3: {}
 
   neotraverse@1.0.1: {}
 
